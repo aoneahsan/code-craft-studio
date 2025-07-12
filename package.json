@@ -6,6 +6,9 @@
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "unpkg": "dist/plugin.js",
+  "bin": {
+    "qrcode-studio-setup": "./scripts/setup.js"
+  },
   "files": [
     "android/src/main/",
     "android/build.gradle",
@@ -14,7 +17,10 @@
     "android/proguard-rules.pro",
     "dist/",
     "ios/Plugin/",
-    "QrCodeStudio.podspec"
+    "QrCodeStudio.podspec",
+    "scripts/",
+    "src/components/**/*.css",
+    "src/styles/"
   ],
   "author": {
     "email": "aoneahsan@gmail.com",
@@ -31,38 +37,65 @@
   },
   "keywords": [
     "capacitor",
-    "build",
-    "kit",
-    "ui"
+    "qrcode",
+    "qr-scanner",
+    "qr-generator",
+    "barcode",
+    "react",
+    "ios",
+    "android",
+    "web",
+    "qr-code-studio",
+    "qr-analytics",
+    "qr-customization"
   ],
   "scripts": {
-    "build": "npm run clean && npm run tsc && rollup -c rollup.config.js",
+    "build": "yarn clean && yarn tsc && rollup -c rollup.config.js",
     "clean": "rimraf ./dist",
     "tsc": "tsc",
     "watch": "tsc --watch",
     "lint": "eslint . --ext ts",
     "prettier": "prettier --write .",
-    "prepublishOnly": "npm run build",
-    "swiftlint": "cd ios && swiftlint lint --fix --format --path Plugin --verbose"
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "prepublishOnly": "yarn build",
+    "swiftlint": "cd ios && swiftlint lint --fix --format --path Plugin --verbose",
+    "postinstall": "node scripts/postinstall.js || echo 'Postinstall script not found, skipping...'"
+  },
+  "dependencies": {
+    "@capacitor/preferences": "^7.0.0",
+    "qrcode": "^1.5.4",
+    "qr-scanner": "^1.4.2"
   },
   "devDependencies": {
     "@capacitor/android": "^7.4.2",
     "@capacitor/cli": "^7.4.2",
     "@capacitor/core": "^7.4.2",
     "@capacitor/ios": "^7.4.2",
+    "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@types/node": "^24.0.13",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "eslint": "^9.31.0",
     "prettier": "^3.6.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.45.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@capacitor/core": "^7.0.0"
+    "@capacitor/core": "^7.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "capacitor": {
     "ios": {

@@ -1,0 +1,1 @@
+export { QRScanner, QRScanner as default } from './QRScanner';

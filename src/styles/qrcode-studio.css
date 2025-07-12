@@ -1,0 +1,17 @@
+/* QRCode Studio - Complete CSS Bundle */
+
+/* Import all component styles */
+@import '../components/QRScanner/QRScanner.css';
+@import '../components/QRGenerator/QRGenerator.css';
+@import '../components/QRStudio/QRStudio.css';
+
+/* Global styles */
+.qrcode-studio-wrapper {
+  box-sizing: border-box;
+}
+
+.qrcode-studio-wrapper *,
+.qrcode-studio-wrapper *::before,
+.qrcode-studio-wrapper *::after {
+  box-sizing: inherit;
+}

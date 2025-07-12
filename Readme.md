@@ -1,321 +1,254 @@
-# QRCode Studio - Capacitor Package Development Plan
+# QRCode Studio
 
-## 📋 Project Overview
+<div align="center">
+  <img src="assets/icon-only.jpeg" alt="QRCode Studio Logo" width="120" />
+  
+  <h3>A comprehensive Capacitor plugin for QR code scanning and generation</h3>
+  
+  [![npm version](https://img.shields.io/npm/v/qrcode-studio.svg)](https://www.npmjs.com/package/qrcode-studio)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Platform Support](https://img.shields.io/badge/platforms-Web%20%7C%20iOS%20%7C%20Android-blue.svg)](https://capacitorjs.com/)
+</div>
 
-**Package Name:** qrcode-studio  
-**Type:** Capacitor Plugin/Package  
-**Repository:** https://github.com/aoneahsan/qrcode-studio  
-**NPM:** https://npmjs.com/package/qrcode-studio  
-**Developer:** Ahsan Mahmood
+## 🚀 Features
 
-### 🎯 Project Goals
+- **📷 QR Code Scanner**: Native camera-based scanning with web fallback
+- **🎨 QR Code Generator**: Support for 17+ different QR code types
+- **🎯 Customizable Design**: Colors, logos, frames, and styles
+- **📊 Analytics**: Track scans, locations, and user engagement
+- **💾 Export Options**: PNG, JPG, SVG, PDF, and more
+- **🌐 Landing Pages**: Create custom landing pages for QR codes
+- **⚛️ React Components**: Ready-to-use components for quick integration
+- **📱 Cross-Platform**: Works on Web, iOS, and Android
 
-Build a comprehensive Capacitor package that provides:
+## 📦 Installation
 
-- QR code scanning capabilities
-- QR code generation for 17+ different data types
-- Customizable QR code designs
-- Landing page generation
-- Analytics and tracking
-- Export functionality in multiple formats
-- Fully customizable React components
+### Quick Setup (Recommended)
 
-## 📚 Reference Applications Analysis
-
-Study these applications for features and UI/UX patterns:
-
-- https://qr-code.io
-- https://www.qr-code-generator.com/
-- https://me-qr.com/
-- https://qrfy.com/
-- https://qr.io/
-
-## 🏗️ Project Structure
-
-```
-qrcode-studio/
-├── src/
-│   ├── index.ts                    # Main entry point
-│   ├── definitions.ts              # TypeScript interfaces
-│   ├── web.ts                      # Web implementation
-│   ├── components/
-│   │   ├── QRScanner/
-│   │   │   ├── QRScanner.tsx
-│   │   │   ├── QRScanner.css
-│   │   │   └── index.ts
-│   │   ├── QRGenerator/
-│   │   │   ├── QRGenerator.tsx
-│   │   │   ├── QRGenerator.css
-│   │   │   └── index.ts
-│   │   ├── QRStudio/
-│   │   │   ├── QRStudio.tsx
-│   │   │   ├── QRStudio.css
-│   │   │   └── index.ts
-│   │   └── shared/
-│   │       ├── LandingPageBuilder/
-│   │       ├── QRCustomizer/
-│   │       ├── QRAnalytics/
-│   │       └── QRExporter/
-│   ├── core/
-│   │   ├── scanner/
-│   │   ├── generator/
-│   │   ├── analytics/
-│   │   └── storage/
-│   ├── types/
-│   │   └── qr-types.ts
-│   └── utils/
-│       ├── validation.ts
-│       └── helpers.ts
-├── android/
-│   └── src/main/java/...
-├── ios/
-│   └── Plugin/
-├── demo/
-│   ├── web-demo/
-│   ├── capacitor-demo/
-│   └── examples/
-├── docs/
-│   ├── README.md
-│   ├── API.md
-│   ├── COMPONENTS.md
-│   └── EXAMPLES.md
-├── tests/
-├── package.json
-├── tsconfig.json
-└── README.md
+```bash
+npm install qrcode-studio
+npx qrcode-studio-setup
 ```
 
-## 🔧 Technical Stack
+The setup script will:
+- Install dependencies
+- Configure iOS and Android permissions
+- Sync Capacitor
+- Create example files
 
-### Core Dependencies
+### Manual Setup
 
-- **QR Code Generation:** qrcode.js / qr-code-styling
-- **QR Code Scanning:** qr-scanner / jsQR
-- **React:** ^18.0.0
-- **Capacitor:** ^5.0.0
-- **TypeScript:** ^5.0.0
+```bash
+# Install the package
+npm install qrcode-studio
 
-### Development Dependencies
+# Install Capacitor if not already installed
+npm install @capacitor/core @capacitor/cli
 
-- **Build Tools:** Rollup, ESBuild
-- **Testing:** Jest, React Testing Library
-- **Linting:** ESLint, Prettier
-- **Documentation:** TypeDoc, Storybook
+# Add platforms
+npx cap add ios
+npx cap add android
 
-## 📦 Core Features Implementation
+# Sync
+npx cap sync
+```
 
-### 1. QR Code Types Support
+#### iOS Configuration
 
-Implement generators for each type:
+Add to your `Info.plist`:
 
-```typescript
-enum QRType {
-  WEBSITE = 'website',
-  PDF = 'pdf',
-  IMAGES = 'images',
-  VIDEO = 'video',
-  WIFI = 'wifi',
-  MENU = 'menu',
-  BUSINESS = 'business',
-  VCARD = 'vcard',
-  MP3 = 'mp3',
-  APPS = 'apps',
-  LINKS_LIST = 'links_list',
-  COUPON = 'coupon',
-  FACEBOOK = 'facebook',
-  INSTAGRAM = 'instagram',
-  SOCIAL_MEDIA = 'social_media',
-  WHATSAPP = 'whatsapp',
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app needs camera access to scan QR codes</string>
+```
+
+#### Android Configuration
+
+Add to your `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+```
+
+## 🎯 Quick Start
+
+### Import Styles
+
+Add to your main CSS file:
+
+```css
+/* Import all QRCode Studio styles */
+@import 'qrcode-studio/src/styles/qrcode-studio.css';
+```
+
+### Basic Usage
+
+```tsx
+import { QRScanner, QRGenerator, QRStudio } from 'qrcode-studio';
+
+// Simple QR Scanner
+function Scanner() {
+  return (
+    <QRScanner
+      onScan={(result) => {
+        console.log('Scanned:', result.content);
+      }}
+    />
+  );
+}
+
+// Simple QR Generator
+function Generator() {
+  return (
+    <QRGenerator
+      type="website"
+      data={{ url: 'https://example.com' }}
+      size={300}
+    />
+  );
+}
+
+// Full Studio Component
+function Studio() {
+  return (
+    <QRStudio
+      features={{
+        scanner: true,
+        generator: true,
+        history: true,
+      }}
+    />
+  );
 }
 ```
 
-### 2. Component Architecture
+## 🔧 API Reference
 
-#### A. QRScanner Component
+### Plugin API
+
+#### Check Permissions
 
 ```typescript
-interface QRScannerProps {
-  onScan: (data: string) => void;
-  onError?: (error: Error) => void;
-  scanDelay?: number;
-  constraints?: MediaStreamConstraints;
-  className?: string;
-  style?: React.CSSProperties;
-}
+import { QRCodeStudio } from 'qrcode-studio';
+
+const permissions = await QRCodeStudio.checkPermissions();
+console.log(permissions.camera); // 'granted' | 'denied' | 'prompt'
 ```
 
-#### B. QRGenerator Component
+#### Request Permissions
 
 ```typescript
-interface QRGeneratorProps {
-  type: QRType;
-  data: QRData;
-  design?: QRDesignOptions;
-  size?: number;
-  format?: ExportFormat;
-  onGenerate?: (qrCode: QRCode) => void;
-}
+const permissions = await QRCodeStudio.requestPermissions();
 ```
 
-#### C. QRStudio Component (Full-featured)
+#### Generate QR Code
 
 ```typescript
-interface QRStudioProps {
-  config?: QRStudioConfig;
-  theme?: Theme;
-  features?: FeatureFlags;
-  onSave?: (qrCode: QRCode) => void;
-  analytics?: AnalyticsConfig;
-}
+const qrCode = await QRCodeStudio.generate({
+  type: 'website',
+  data: { url: 'https://example.com' },
+  design: {
+    colors: {
+      dark: '#000000',
+      light: '#FFFFFF'
+    }
+  },
+  size: 300
+});
+
+console.log(qrCode.dataUrl); // Base64 image
+console.log(qrCode.svg);     // SVG string
 ```
 
-### 3. Customization Options
+#### Start Scanning
 
 ```typescript
-interface QRDesignOptions {
-  colors: {
-    dark: string;
-    light: string;
-  };
-  logo?: {
-    src: string;
-    size: number;
-    margin: number;
-  };
-  frame?: {
-    style: FrameStyle;
-    text?: string;
-    color?: string;
-  };
-  dotsStyle?: DotsStyle;
-  cornersSquareStyle?: CornerStyle;
-  cornersDotStyle?: CornerStyle;
-}
+// Add listener for scan results
+const listener = await QRCodeStudio.addListener('scanResult', (result) => {
+  console.log('Scanned:', result.content);
+  console.log('Type:', result.type);
+  console.log('Data:', result.parsedData);
+});
+
+// Start scanning
+await QRCodeStudio.startScan({
+  camera: 'back',
+  showTorchButton: true
+});
+
+// Stop scanning
+await QRCodeStudio.stopScan();
+
+// Remove listener
+listener.remove();
 ```
 
-### 4. Export Formats
+## 🎨 React Components
 
-Support for: PNG, JPG, SVG, PDF, GIF, JSON, WebP, EPS, WMF
+### QRScanner Component
 
-### 5. Landing Page Builder
-
-```typescript
-interface LandingPageConfig {
-  template: string;
-  customization: {
-    colors: ColorScheme;
-    fonts: FontConfig;
-    layout: LayoutOptions;
-  };
-  content: PageContent;
-  analytics: boolean;
-}
+```tsx
+<QRScanner
+  onScan={(result) => {
+    console.log('Scanned:', result);
+  }}
+  onError={(error) => {
+    console.error('Error:', error);
+  }}
+  options={{
+    camera: 'back',
+    scanDelay: 1000,
+    showTorchButton: true,
+    showFlipCameraButton: true
+  }}
+  showOverlay={true}
+  className="my-scanner"
+/>
 ```
 
-## 🚀 Development Phases
+### QRGenerator Component
 
-### Phase 1: Core Infrastructure
+```tsx
+<QRGenerator
+  type="wifi"
+  data={{
+    ssid: 'MyNetwork',
+    password: 'MyPassword',
+    security: 'WPA2'
+  }}
+  design={{
+    colors: {
+      dark: '#2C3E50',
+      light: '#FFFFFF'
+    },
+    logo: {
+      src: 'https://example.com/logo.png',
+      size: 60
+    },
+    dotsStyle: 'rounded',
+    cornersSquareStyle: 'extra-rounded'
+  }}
+  size={400}
+  showDownload={true}
+  showShare={true}
+  onGenerate={(result) => {
+    console.log('Generated:', result);
+  }}
+/>
+```
 
-- [ ] Initialize Capacitor plugin structure
-- [ ] Set up TypeScript configuration
-- [ ] Configure build pipeline
-- [ ] Create basic plugin architecture
-- [ ] Implement web fallbacks
+### QRStudio Component
 
-### Phase 2: Scanner Implementation
-
-- [ ] Implement native iOS scanner
-- [ ] Implement native Android scanner
-- [ ] Create web scanner fallback
-- [ ] Build QRScanner React component
-- [ ] Add scanner customization options
-- [ ] Write scanner tests
-
-### Phase 3: Generator Implementation
-
-- [ ] Implement QR generation core
-- [ ] Add support for all 17 QR types
-- [ ] Create data validators for each type
-- [ ] Build QRGenerator React component
-- [ ] Implement design customization
-- [ ] Add export functionality
-
-### Phase 4: QR Studio Component
-
-- [ ] Design component architecture
-- [ ] Implement type selector UI
-- [ ] Build customization panel
-- [ ] Create preview functionality
-- [ ] Add landing page builder
-- [ ] Implement analytics hooks
-- [ ] Create responsive layout
-
-### Phase 5: Landing Pages & Analytics
-
-- [ ] Design landing page templates
-- [ ] Implement page builder
-- [ ] Create hosting integration
-- [ ] Build analytics dashboard
-- [ ] Add tracking capabilities
-- [ ] Implement data storage
-
-### Phase 6: Testing & Documentation
-
-- [ ] Write comprehensive unit tests
-- [ ] Create integration tests
-- [ ] Build demo applications
-- [ ] Write API documentation
-- [ ] Create component documentation
-- [ ] Prepare usage examples
-
-### Phase 7: Publishing & Deployment
-
-- [ ] Finalize package.json
-- [ ] Create GitHub repository
-- [ ] Set up CI/CD pipeline
-- [ ] Publish to NPM
-- [ ] Deploy demo sites
-- [ ] Create marketing materials
-
-## 📱 Platform-Specific Implementations
-
-### iOS Implementation
-
-- Use AVFoundation for camera access
-- Implement Vision framework for QR detection
-- Handle permissions properly
-- Support iOS 13+
-
-### Android Implementation
-
-- Use CameraX API
-- Implement ML Kit for barcode scanning
-- Handle runtime permissions
-- Support Android 5.0+
-
-### Web Implementation
-
-- Use getUserMedia API
-- Implement jsQR for scanning
-- Handle browser compatibility
-- Provide fallbacks
-
-## 🎨 Component Customization API
-
-### Props-based Customization
-
-Every component should accept comprehensive props for customization:
-
-```typescript
-// Example: QRStudio full customization
+```tsx
 <QRStudio
   config={{
-    allowedTypes: ['website', 'wifi', 'vcard'],
+    allowedTypes: ['website', 'wifi', 'vcard', 'text'],
     defaultType: 'website',
-    analytics: {
-      enabled: true,
-      trackScans: true,
-      trackDownloads: true
+    defaultDesign: {
+      colors: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
     }
   }}
   theme={{
@@ -329,260 +262,177 @@ Every component should accept comprehensive props for customization:
     landingPages: true,
     analytics: true,
     export: true,
-    sharing: true
+    sharing: true,
+    history: true,
+    favorites: true,
+    templates: true
   }}
-  onSave={handleSave}
-  onScan={handleScan}
-  onExport={handleExport}
+  onSave={(result) => {
+    console.log('Saved:', result);
+  }}
+  onScan={(result) => {
+    console.log('Scanned:', result);
+  }}
 />
 ```
 
-## 📊 Analytics Implementation
+## 📋 Supported QR Code Types
 
-### Tracking Features
+| Type | Description | Required Data |
+|------|-------------|---------------|
+| `website` | Link to any website | `url`, `title?`, `description?` |
+| `pdf` | Share PDF documents | `url`, `title?`, `description?` |
+| `images` | Multiple images gallery | `images[]`, `title?`, `description?` |
+| `video` | Video content | `url`, `title?`, `thumbnail?` |
+| `wifi` | WiFi credentials | `ssid`, `password?`, `security` |
+| `menu` | Restaurant menu | `restaurantName`, `categories[]` |
+| `business` | Business information | `name`, `phone?`, `email?`, `website?` |
+| `vcard` | Digital business card | `firstName?`, `lastName?`, `phone?`, `email?` |
+| `mp3` | Audio files | `url`, `title?`, `artist?` |
+| `apps` | App store links | `appStoreUrl?`, `playStoreUrl?` |
+| `links_list` | Multiple links | `title?`, `links[]` |
+| `coupon` | Discount coupons | `code`, `description?`, `validUntil?` |
+| `facebook` | Facebook page | `pageUrl`, `pageName?` |
+| `instagram` | Instagram profile | `profileUrl`, `username?` |
+| `social_media` | All social links | `facebook?`, `instagram?`, `twitter?`, etc. |
+| `whatsapp` | WhatsApp chat | `phoneNumber`, `message?` |
+| `text` | Plain text | `text` |
+| `email` | Email composition | `to`, `subject?`, `body?` |
+| `sms` | SMS message | `phoneNumber`, `message?` |
+| `phone` | Phone call | `phoneNumber` |
+| `location` | Geographic location | `latitude`, `longitude`, `address?` |
+| `event` | Calendar event | `title`, `startDate`, `endDate?`, `location?` |
 
-- Scan count and location
-- Device type and OS
-- Time of scan
-- Conversion tracking
-- Custom events
+## 🎨 Customization Options
 
-### Analytics Dashboard
+### Design Options
 
-- Real-time scan data
-- Geographic distribution
-- Device analytics
-- Performance metrics
-- Export capabilities
+```typescript
+interface QRDesignOptions {
+  colors?: {
+    dark?: string;    // Foreground color
+    light?: string;   // Background color
+  };
+  logo?: {
+    src: string;      // Logo URL
+    size?: number;    // Logo size
+    margin?: number;  // Logo margin
+    borderRadius?: number;
+  };
+  frame?: {
+    style: 'square' | 'rounded' | 'circle' | 'banner';
+    text?: string;
+    color?: string;
+    textColor?: string;
+  };
+  dotsStyle?: 'square' | 'rounded' | 'dots' | 'classy' | 'extra-rounded';
+  cornersSquareStyle?: 'square' | 'dot' | 'extra-rounded';
+  cornersDotStyle?: 'square' | 'dot' | 'extra-rounded';
+  backgroundImage?: string;
+  imageSize?: number;  // 0-1
+  margin?: number;     // Quiet zone
+}
+```
 
-## 🧪 Testing Strategy
+## 📊 Analytics
 
-### Unit Tests
+Track QR code performance:
 
-- Test each QR type generator
-- Test scanner functionality
-- Test export formats
-- Test customization options
+```typescript
+const analytics = await QRCodeStudio.getAnalytics({
+  qrCodeId: 'qr_123',
+  dateRange: {
+    start: new Date('2024-01-01'),
+    end: new Date()
+  },
+  metrics: ['scans', 'unique_scans', 'locations', 'devices']
+});
 
-### Integration Tests
+console.log('Total scans:', analytics.totalScans);
+console.log('Unique scans:', analytics.uniqueScans);
+console.log('Top locations:', analytics.locations);
+console.log('Device types:', analytics.devices);
+```
 
-- Test native platform integration
-- Test React component rendering
-- Test data flow
-- Test error handling
+## 💾 Export Formats
 
-### E2E Tests
+- **PNG** - Raster image format
+- **JPG** - Compressed image format
+- **SVG** - Vector format (scalable)
+- **PDF** - Document format
+- **GIF** - Animated format support
+- **JSON** - Raw QR data
+- **WebP** - Modern image format
+- **EPS** - Vector format for print
+- **WMF** - Windows metafile
 
-- Test full QR creation flow
-- Test scanning workflow
-- Test export functionality
-- Test analytics tracking
+## 🔐 Permissions
 
-## 📚 Documentation Structure
+### iOS
+- Camera permission for scanning
+- Photo library permission for saving (optional)
 
-### 1. README.md
+### Android
+- Camera permission for scanning
+- Storage permission for saving (optional)
 
-- Installation guide
-- Quick start
-- Basic examples
-- API overview
+### Web
+- Camera/getUserMedia permission for scanning
 
-### 2. API Documentation
+## 🧪 Testing
 
-- Complete API reference
-- Method signatures
-- Type definitions
-- Platform differences
+Run the test suite:
 
-### 3. Component Documentation
+```bash
+npm test
+```
 
-- Props documentation
-- Usage examples
-- Customization guide
-- Best practices
+## 🤝 Contributing
 
-### 4. Examples
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
 
-- Basic QR generation
-- Custom designs
-- Landing pages
-- Analytics integration
-- Platform-specific usage
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 🚀 Demo Applications
+## 📄 License
 
-### 1. Web Demo
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- Interactive playground
-- All QR types demonstration
-- Live customization
-- Export examples
+## 👨‍💻 Author
 
-### 2. Capacitor Demo
+**Ahsan Mahmood**
 
-- Cross-platform app
-- Native features showcase
-- Performance demonstration
-- Real-world examples
+- Website: [https://aoneahsan.com](https://aoneahsan.com)
+- GitHub: [@aoneahsan](https://github.com/aoneahsan)
+- Email: [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com)
 
-### 3. Component Demos
+## 🙏 Acknowledgments
 
-- Standalone scanner demo
-- Standalone generator demo
-- Full studio demo
-- Integration examples
+- Built on top of [Capacitor](https://capacitorjs.com/)
+- QR scanning powered by [qr-scanner](https://github.com/nimiq/qr-scanner)
+- QR generation powered by [qrcode](https://github.com/soldair/node-qrcode)
 
-## 📝 App Project Documentation
+## 📈 Roadmap
 
-Create comprehensive documentation for the main app that will use this package:
+- [ ] Batch QR code generation
+- [ ] Custom QR code shapes
+- [ ] Animated QR codes
+- [ ] Advanced analytics dashboard
+- [ ] Cloud sync support
+- [ ] Bulk operations API
+- [ ] QR code templates marketplace
 
-### App Requirements
+## 💡 Support
 
-- User authentication
-- QR code management
-- Analytics dashboard
-- Subscription/pricing
-- Team collaboration
-- API integration
-- White-label options
-
-### Technical Architecture
-
-- React + Capacitor
-- State management (Redux/Zustand)
-- Backend API design
-- Database schema
-- Authentication flow
-- Payment integration
-
-## 🔐 Security Considerations
-
-- Validate all QR data inputs
-- Sanitize generated content
-- Secure API endpoints
-- Implement rate limiting
-- Handle sensitive data properly
-- CORS configuration
-
-## 🎯 Success Metrics
-
-- NPM weekly downloads > 1000
-- GitHub stars > 100
-- Zero critical bugs
-- 90%+ test coverage
-- < 100kb bundle size
-- 5-star plugin rating
-
-## 🤝 Contribution Guidelines
-
-- Code style guide
-- Pull request template
-- Issue templates
-- Development setup
-- Testing requirements
+- 📧 Email: [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com)
+- 🐛 Issues: [GitHub Issues](https://github.com/aoneahsan/qrcode-studio/issues)
+- 📖 Docs: [Documentation](https://github.com/aoneahsan/qrcode-studio/wiki)
 
 ---
 
-## 👨‍💻 Developer
-
-**Ahsan Mahmood**
-
-- 🌐 Website: [https://aoneahsan.com](https://aoneahsan.com)
-- 📧 Email: [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com)
-- 💼 LinkedIn: [https://linkedin.com/in/aoneahsan](https://linkedin.com/in/aoneahsan)
-
-### More info - raw project plan
-
-let's plan a "capacitor" package project named "qrcode-studio"
-
-mainly want to create a package with ability to scan qrcode and get the data from it. and also have ability to generate qrcode from
-
-- Website
-  - Link to any website URL
-- PDF
-  - Show a PDF
-- Images
-  - Share multiple images
-- Video
-  - Show a video
-- WiFi
-  - Connect to a Wi-Fi network
-- Menu
-  - Create a restaurant menu
-- Business
-  - Share information about your business
-- vCard
-  - Share a digital business card
-- MP3
-  - Share an audio file
-- Apps
-  - Redirect to an app store
-- List of Links
-  - Share multiple links
-- Coupon
-  - Share a coupon
-- Facebook
-  - Share your Facebook page
-- Instagram
-  - Share your Instagram
-- Social Media
-  - Share your social channels
-- WhatsApp
-  - Get WhatsApp messages
-
-Change to the [QR code] option to display your QR code. Scan it with your phone to preview your landing page on an actual mobile device. This feature will be enabled after you fill in all required fields.
-
-Generate a Custom QR Code in Just a Few Steps, See how easy it is to create a custom-designed QR code
-
-- Select your QR code type
-  - Share social media accounts, website URLs, contact info, and much more.
-- Create a custom QR code design
-  - Choose from a variety of color schemes and frame options — you can even add a logo!
-- Download your dynamic QR code
-  - Select your desired file type (PNG, JPG, SVG, PDF, Gif, JSON, WebP, EPS, or WMF) and easily print or share your QR code.
-- Share your QR code
-  - Share your QR code with your friends and family
-- Scan your QR code with your phone to preview your landing page on an actual mobile device.
-
-An Easy-To-Use QR Code Generator
-
-- Create tech-savvy QR codes
-  - Take advantage of advanced features to make your easy-to-scan QR codes stand out, including custom colors, frames, and logos.
-- Access real-time data
-  - Use our real-time analytics to track QR codes usage and optimize your marketing efforts. Our data shows you when, where, and how often customers scan your QR codes.
-- Turn clicks into conversions
-  - Create custom designs to communicate your brand identity and encourage high scan rates. Share your dynamic QR codes and watch customers flock to your business.
-- Generate landing pages
-  - Our platform does more than create QR codes. You don’t need to build an entire website — we can help you easily generate custom landing pages for your QR codes.
-- Customize your QR codes
-  - Our advanced features make it easy to create impressive QR codes that stand out from the pack. Integrate custom design elements to make your dynamic QR codes pop.
-- Explore various QR code types
-  - Take advantage of advanced features to make your easy-to-scan QR codes stand out, including custom colors, frames, and logos.
-
-mainly this package will be the core building block for the app, where i will put the ability to generate qrcode and scan qrcode, that app we will creating using "react + capacitor", so we will have a web, android and ios app
-
-this QR code studio package should have the ability to generate qrcode and scan qrcode, and also have the ability to generate landing page for the qrcode, and also have the ability to customize the qrcode, and also have the ability to explore various qrcode types, and also have the ability to share the qrcode, and also have the ability to download the qrcode, and also have the ability to print the qrcode, and also have the ability to scan the qrcode with your phone to preview your landing page on an actual mobile device.
-
-it should provide a full working "QR Code Studio" component which should provide all those features to create and work with QR code with all the options and features that i mentioned above, that component should be fully functional and fully customizable. mean each and every feature should be controlled using some kind of props or state or context or something else, so that we can easily customize the component to our needs.
-
-it should provide standalone qr code scanner and qr code generator component as well, mean it should create each and everything as standalone thing and export everything and then in the end also create a full flegded QR code studio component which will be the core building block for the app, and it should be fully functional and fully customizable.
-
-the reference apps are "https://qr-code.io", "https://www.qr-code-generator.com/", "https://me-qr.com/", "https://qrfy.com/", "https://qr.io/"
-
-do study the features and the UI of the reference apps and then create the package
-
-and create the documentation for the package, and also create the demo app for the package, and also create the demo app for the standalone qr code scanner and qr code generator component.
-
-and in the end create a detailed documentation for the "actual app project" which we need to create using "react + capacitor", mentioning all the required features from these reference websites and mentioning that we need to use this "QR Code Studio" package to create the app.
-
-i will publish this package on npm and put it's code on github at
-http://github.com/aoneahsan/qrcode-studio
-http://npmjs.com/package/qrcode-studio
-
-## 👨‍💻 Developer
-
-**Ahsan Mahmood**
-
-- 🌐 Website: [https://aoneahsan.com](https://aoneahsan.com)
-- 📧 Email: [aoneahsan@gmail.com](mailto:aoneahsan@gmail.com)
-- 💼 LinkedIn: [https://linkedin.com/in/aoneahsan](https://linkedin.com/in/aoneahsan)
+<div align="center">
+  Made with ❤️ by <a href="https://aoneahsan.com">Ahsan Mahmood</a>
+</div>

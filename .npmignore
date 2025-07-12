@@ -1,0 +1,60 @@
+# Source files (only ship built files)
+src/**/*.ts
+src/**/*.tsx
+!src/**/*.d.ts
+
+# Development files
+.gitignore
+.eslintrc
+.prettierrc
+tsconfig.json
+tsconfig.node.json
+rollup.config.js
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+# Documentation source
+docs/
+*.md
+!README.md
+!CHANGELOG.md
+
+# Testing
+tests/
+coverage/
+*.test.*
+*.spec.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+tmp/
+temp/
+*.tmp
+*.log
+
+# Development folders
+android/
+ios/
+example/
+demo/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Keep only necessary files
+!dist/
+!scripts/setup.js
+!src/components/**/*.css
+!src/styles/
