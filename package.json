@@ -1,0 +1,78 @@
+{
+  "name": "qrcode-studio",
+  "version": "0.0.1",
+  "description": "A comprehensive Capacitor plugin for QR code scanning and generation with 17+ data types, customizable designs, landing pages, and analytics. Build feature-rich QR code experiences for web, iOS, and Android.",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/settings.gradle",
+    "android/proguard-rules.pro",
+    "dist/",
+    "ios/Plugin/",
+    "QrCodeStudio.podspec"
+  ],
+  "author": {
+    "email": "aoneahsan@gmail.com",
+    "name": "Ahsan Mahmood (Aoneahsan)",
+    "url": "https://aoneahsan.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aoneahsan/qrcode-studio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aoneahsan/qrcode-studio/issues"
+  },
+  "keywords": [
+    "capacitor",
+    "build",
+    "kit",
+    "ui"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run tsc && rollup -c rollup.config.js",
+    "clean": "rimraf ./dist",
+    "tsc": "tsc",
+    "watch": "tsc --watch",
+    "lint": "eslint . --ext ts",
+    "prettier": "prettier --write .",
+    "prepublishOnly": "npm run build",
+    "swiftlint": "cd ios && swiftlint lint --fix --format --path Plugin --verbose"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/cli": "^7.4.2",
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/ios": "^7.4.2",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/node": "^24.0.13",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "eslint": "^9.31.0",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.45.0",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^7.0.0"
+  },
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  },
+  "release": {
+    "npm": "https://www.npmjs.com/package/qrcode-studio"
+  }
+}
