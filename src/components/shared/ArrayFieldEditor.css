@@ -1,0 +1,143 @@
+.array-field-editor {
+  border: 1px solid var(--qr-border, #e0e0e0);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.array-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.array-field-header label {
+  font-weight: 600;
+  color: var(--qr-text, #333);
+}
+
+.array-field-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-count {
+  font-size: 12px;
+  color: var(--qr-text-secondary, #666);
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--qr-text-secondary, #666);
+  padding: 4px 8px;
+}
+
+.empty-message {
+  text-align: center;
+  color: var(--qr-text-secondary, #666);
+  font-style: italic;
+  padding: 20px;
+}
+
+.array-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.array-item {
+  background-color: var(--qr-background, #f9f9f9);
+  border: 1px solid var(--qr-border, #e0e0e0);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.item-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--qr-text-secondary, #666);
+  background-color: var(--qr-surface, #fff);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.remove-button {
+  background: none;
+  border: none;
+  color: var(--qr-danger, #ff3b30);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.remove-button:hover {
+  background-color: rgba(255, 59, 48, 0.1);
+}
+
+.item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-content input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--qr-border, #e0e0e0);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.add-item-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 16px;
+  border: 1px dashed var(--qr-primary, #007AFF);
+  background: none;
+  color: var(--qr-primary, #007AFF);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.add-item-button:hover {
+  background-color: rgba(0, 122, 255, 0.05);
+  border-style: solid;
+}
+
+/* Menu specific styles */
+.menu-category {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-category > input {
+  font-weight: 600;
+}
+
+.menu-category .array-field-editor {
+  margin-top: 8px;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.02);
+}

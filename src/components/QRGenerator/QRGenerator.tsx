@@ -156,7 +156,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({
     }
   };
 
-  const exportFormats: ExportFormat[] = ['png', 'jpg', 'svg', 'pdf'];
+  const exportFormats: ExportFormat[] = ['png', 'jpg', 'svg', 'pdf', 'json', 'webp', 'gif', 'eps', 'wmf'];
 
   return (
     <div 

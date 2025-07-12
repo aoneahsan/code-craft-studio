@@ -35,8 +35,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - iOS 13+
 - Android 5.0+
 
+### Updates (Post-release fixes)
+- Fixed formatQRData for all 17+ QR types (IMAGES, MENU, BUSINESS, MP3, APPS, LINKS_LIST, COUPON, SOCIAL_MEDIA)
+- Added array field editor for complex data types (images, links, menu categories)
+- Implemented export support for JPG, JSON, and WebP formats
+- Fixed form data handling for array-based QR types
+- Added proper data transformation in QRStudio component
+
 ### Known Issues
-- Landing page builder not yet implemented
-- Advanced analytics require backend service
+- Landing page builder UI not yet implemented (type definitions exist)
+- Advanced analytics require backend service (mock data only)
 - Native iOS and Android implementations pending
-- Export to PDF, EPS, WMF formats not yet supported
+- Export to PDF, EPS, WMF formats require additional libraries

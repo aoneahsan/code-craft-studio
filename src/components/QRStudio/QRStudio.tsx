@@ -12,6 +12,7 @@ import type {
 } from '../../definitions';
 import { QRType } from '../../definitions';
 import { qrFormFields, qrTypeInfo } from '../../utils/qr-forms';
+import { ArrayFieldEditor, renderImageItem, renderLinkItem, renderMenuCategory } from '../shared/ArrayFieldEditor';
 // import './QRStudio.css'; // CSS should be imported by the consuming app
 
 export const QRStudio: React.FC<QRStudioProps> = ({
@@ -108,7 +109,28 @@ export const QRStudio: React.FC<QRStudioProps> = ({
 
   const getQRData = (): QRData => {
     // Transform form data based on type
-    return formData as QRData;
+    // Clean up empty fields and ensure proper structure
+    const cleanData = { ...formData };
+    
+    // Remove empty string values
+    Object.keys(cleanData).forEach(key => {
+      if (cleanData[key] === '') {
+        delete cleanData[key];
+      }
+    });
+    
+    // Ensure arrays are properly initialized
+    if (selectedType === QRType.IMAGES && !cleanData.images) {
+      cleanData.images = [];
+    }
+    if (selectedType === QRType.LINKS_LIST && !cleanData.links) {
+      cleanData.links = [];
+    }
+    if (selectedType === QRType.MENU && !cleanData.categories) {
+      cleanData.categories = [];
+    }
+    
+    return cleanData as QRData;
   };
 
   const renderTypeSelector = () => {
@@ -181,9 +203,36 @@ export const QRStudio: React.FC<QRStudioProps> = ({
               />
             ) : field.type === 'array' ? (
               <div className="array-field">
-                <button type="button" className="add-item-button">
-                  Add {field.label}
-                </button>
+                {field.name === 'images' && (
+                  <ArrayFieldEditor
+                    fieldName={field.name}
+                    label={field.label}
+                    value={formData[field.name] || []}
+                    onChange={(value) => handleFormChange(field.name, value)}
+                    itemTemplate={{ url: '', caption: '' }}
+                    renderItem={renderImageItem}
+                  />
+                )}
+                {field.name === 'links' && (
+                  <ArrayFieldEditor
+                    fieldName={field.name}
+                    label={field.label}
+                    value={formData[field.name] || []}
+                    onChange={(value) => handleFormChange(field.name, value)}
+                    itemTemplate={{ title: '', url: '', icon: '' }}
+                    renderItem={renderLinkItem}
+                  />
+                )}
+                {field.name === 'categories' && (
+                  <ArrayFieldEditor
+                    fieldName={field.name}
+                    label={field.label}
+                    value={formData[field.name] || []}
+                    onChange={(value) => handleFormChange(field.name, value)}
+                    itemTemplate={{ name: '', items: [] }}
+                    renderItem={renderMenuCategory}
+                  />
+                )}
               </div>
             ) : (
               <input

@@ -176,7 +176,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
     try {
       const { qrCode, fileName = 'qrcode', format = 'png' } = options;
 
-      if (!qrCode.dataUrl) {
+      if (!qrCode.dataUrl && !qrCode.svg) {
         throw new Error('No QR code data to save');
       }
 
@@ -184,11 +184,91 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       const link = document.createElement('a');
       link.download = `${fileName}.${format}`;
 
-      if (format === 'svg' && qrCode.svg) {
-        const blob = new Blob([qrCode.svg], { type: 'image/svg+xml' });
-        link.href = URL.createObjectURL(blob);
-      } else {
-        link.href = qrCode.dataUrl;
+      switch (format) {
+        case 'svg':
+          if (qrCode.svg) {
+            const blob = new Blob([qrCode.svg], { type: 'image/svg+xml' });
+            link.href = URL.createObjectURL(blob);
+          } else {
+            throw new Error('SVG data not available');
+          }
+          break;
+
+        case 'json':
+          // Export QR code data as JSON
+          const jsonData = {
+            id: qrCode.id,
+            dataUrl: qrCode.dataUrl,
+            svg: qrCode.svg,
+            timestamp: Date.now()
+          };
+          const jsonBlob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+          link.href = URL.createObjectURL(jsonBlob);
+          break;
+
+        case 'jpg':
+          // Convert PNG to JPG using canvas
+          if (qrCode.dataUrl) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              img.src = qrCode.dataUrl!;
+            });
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx!.fillStyle = '#FFFFFF';
+            ctx!.fillRect(0, 0, canvas.width, canvas.height);
+            ctx!.drawImage(img, 0, 0);
+            
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
+          }
+          break;
+
+        case 'webp':
+          // Convert to WebP if supported
+          if (qrCode.dataUrl) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              img.src = qrCode.dataUrl!;
+            });
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx!.drawImage(img, 0, 0);
+            
+            link.href = canvas.toDataURL('image/webp', 0.95);
+          }
+          break;
+
+        case 'pdf':
+          // For PDF, we would need a library like jsPDF
+          // For now, throw an informative error
+          throw new Error('PDF export requires additional libraries. Please use PNG or SVG format.');
+
+        case 'gif':
+        case 'eps':
+        case 'wmf':
+          // These formats require specialized libraries
+          throw new Error(`${format.toUpperCase()} export is not yet implemented. Please use PNG, JPG, or SVG format.`);
+
+        case 'png':
+        default:
+          if (qrCode.dataUrl) {
+            link.href = qrCode.dataUrl;
+          } else {
+            throw new Error('PNG data not available');
+          }
+          break;
       }
 
       // Trigger download
@@ -456,6 +536,93 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
 
       case QRType.INSTAGRAM:
         return data.profileUrl;
+
+      case QRType.IMAGES:
+        // For images, create a landing page URL or JSON representation
+        return JSON.stringify({
+          type: 'images',
+          title: data.title,
+          description: data.description,
+          images: data.images
+        });
+
+      case QRType.MENU:
+        // For menu, create a structured JSON representation
+        return JSON.stringify({
+          type: 'menu',
+          restaurant: data.restaurantName,
+          currency: data.currency || 'USD',
+          categories: data.categories
+        });
+
+      case QRType.BUSINESS:
+        // Business card format
+        const businessLines = ['BEGIN:BUSINESS'];
+        if (data.name) businessLines.push(`NAME:${data.name}`);
+        if (data.industry) businessLines.push(`INDUSTRY:${data.industry}`);
+        if (data.phone) businessLines.push(`PHONE:${data.phone}`);
+        if (data.email) businessLines.push(`EMAIL:${data.email}`);
+        if (data.website) businessLines.push(`URL:${data.website}`);
+        if (data.address) businessLines.push(`ADDRESS:${data.address}`);
+        if (data.hours) businessLines.push(`HOURS:${data.hours}`);
+        if (data.description) businessLines.push(`DESC:${data.description}`);
+        businessLines.push('END:BUSINESS');
+        return businessLines.join('\n');
+
+      case QRType.MP3:
+        // For MP3, create a structured representation
+        return JSON.stringify({
+          type: 'mp3',
+          url: data.url,
+          title: data.title,
+          artist: data.artist,
+          album: data.album,
+          coverArt: data.coverArt
+        });
+
+      case QRType.APPS:
+        // For apps, create a multi-platform URL or JSON
+        if (data.customUrl) return data.customUrl;
+        if (data.appStoreUrl) return data.appStoreUrl;
+        if (data.playStoreUrl) return data.playStoreUrl;
+        if (data.windowsStoreUrl) return data.windowsStoreUrl;
+        return JSON.stringify({
+          type: 'apps',
+          appName: data.appName,
+          description: data.description,
+          stores: {
+            appStore: data.appStoreUrl,
+            playStore: data.playStoreUrl,
+            windowsStore: data.windowsStoreUrl
+          }
+        });
+
+      case QRType.LINKS_LIST:
+        // For links list, create a JSON representation
+        return JSON.stringify({
+          type: 'links',
+          title: data.title,
+          links: data.links
+        });
+
+      case QRType.COUPON:
+        // For coupon, create a structured format
+        return JSON.stringify({
+          type: 'coupon',
+          code: data.code,
+          description: data.description,
+          discount: data.discount,
+          validUntil: data.validUntil,
+          terms: data.terms
+        });
+
+      case QRType.SOCIAL_MEDIA:
+        // For social media, create a multi-link format
+        const socialLinks = Object.entries(data)
+          .filter(([key, value]) => value && key !== 'type')
+          .map(([network, url]) => `${network}: ${url}`)
+          .join('\n');
+        return socialLinks || JSON.stringify(data);
 
       case QRType.TEXT:
       default:
