@@ -10,16 +10,16 @@
 - [x] Add code coverage reporting ✅ (2024-07-12)
 
 ### 2. Native Platform Implementation
-- [ ] iOS native scanner implementation
-- [ ] Android native scanner implementation
-- [ ] Native permission handling
-- [ ] Platform-specific optimizations
+- [x] iOS native scanner implementation ✅ (2025-07-12)
+- [x] Android native scanner implementation ✅ (2025-07-12)
+- [x] Native permission handling ✅ (2025-07-12)
+- [x] Platform-specific optimizations ✅ (2025-07-12)
 
 ### 3. Documentation Improvements
 - [x] Create video tutorials ✅ (2025-07-12)
 - [x] Add interactive examples ✅ (2025-07-12)
 - [x] Create dedicated documentation site ✅ (2025-07-12)
-- [ ] Add API playground
+- [x] Add API playground ✅ (2025-07-12)
 
 ## 📈 Version 0.2.0 (Q3 2024)
 

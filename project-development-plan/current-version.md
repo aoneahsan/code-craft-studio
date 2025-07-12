@@ -89,11 +89,31 @@ Initial release of QRCode Studio - A comprehensive Capacitor plugin for QR code 
   - Live code playground
   - Multi-language support (i18n)
   - SEO optimization
+- Implemented native iOS scanner with:
+  - Swift implementation using AVFoundation
+  - QR code scanning with ML Kit alternative
+  - Camera controls (torch, flip, zoom)
+  - Image-based QR scanning
+  - Full permission handling
+- Implemented native Android scanner with:
+  - CameraX integration
+  - ML Kit barcode scanning
+  - Material Design UI
+  - Full permission handling
+  - Battery optimization
+- Created comprehensive permission documentation
+- Added platform-specific optimization guide
+- Created interactive API playground with:
+  - Web-based testing interface
+  - Mock API responses
+  - Code example generation
+  - Parameter validation
+  - Visual QR preview
 
 ## Known Limitations
-- Native iOS/Android implementations not included
 - Some export formats (PDF, GIF, EPS, WMF) require additional libraries
 - Analytics and landing pages need backend implementation
+- Native implementations require testing on physical devices
 
 ## Breaking Changes
 None - Initial release

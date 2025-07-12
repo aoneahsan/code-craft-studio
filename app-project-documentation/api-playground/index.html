@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRCode Studio API Playground</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        .method-card {
+            transition: all 0.3s ease;
+        }
+        .method-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .qr-preview {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .json-editor {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+        }
+        .tab-active {
+            border-bottom: 2px solid #3B82F6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">QRCode Studio API Playground</h1>
+            <p class="text-gray-600">Test and explore the QRCode Studio API methods interactively</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- API Methods List -->
+            <div class="lg:col-span-1">
+                <h2 class="text-2xl font-semibold mb-4">API Methods</h2>
+                
+                <!-- Scanner Methods -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-700 mb-3">Scanner</h3>
+                    <div class="space-y-2">
+                        <button onclick="selectMethod('scan')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">scan()</div>
+                            <div class="text-sm text-gray-500">Start QR code scanning</div>
+                        </button>
+                        <button onclick="selectMethod('stopScan')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">stopScan()</div>
+                            <div class="text-sm text-gray-500">Stop current scan</div>
+                        </button>
+                        <button onclick="selectMethod('scanFromFile')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">scanFromFile()</div>
+                            <div class="text-sm text-gray-500">Scan from image file</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Generator Methods -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-700 mb-3">Generator</h3>
+                    <div class="space-y-2">
+                        <button onclick="selectMethod('generate')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">generate()</div>
+                            <div class="text-sm text-gray-500">Generate QR code</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Permission Methods -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-700 mb-3">Permissions</h3>
+                    <div class="space-y-2">
+                        <button onclick="selectMethod('checkPermissions')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">checkPermissions()</div>
+                            <div class="text-sm text-gray-500">Check current permissions</div>
+                        </button>
+                        <button onclick="selectMethod('requestPermissions')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">requestPermissions()</div>
+                            <div class="text-sm text-gray-500">Request permissions</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History Methods -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-700 mb-3">History</h3>
+                    <div class="space-y-2">
+                        <button onclick="selectMethod('getHistory')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">getHistory()</div>
+                            <div class="text-sm text-gray-500">Get scan/generate history</div>
+                        </button>
+                        <button onclick="selectMethod('clearHistory')" class="method-card w-full text-left p-3 bg-white rounded-lg shadow hover:bg-blue-50">
+                            <div class="font-medium">clearHistory()</div>
+                            <div class="text-sm text-gray-500">Clear all history</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Testing Panel -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 id="methodTitle" class="text-2xl font-semibold mb-4">Select a method</h2>
+                    
+                    <!-- Method Description -->
+                    <div id="methodDescription" class="mb-6 text-gray-600">
+                        Choose an API method from the left panel to start testing
+                    </div>
+
+                    <!-- Parameters Editor -->
+                    <div id="parametersSection" class="mb-6 hidden">
+                        <h3 class="text-lg font-medium mb-3">Parameters</h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <textarea id="parametersEditor" class="json-editor w-full h-40 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Execute Button -->
+                    <div id="executeSection" class="mb-6 hidden">
+                        <button onclick="executeMethod()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Execute Method
+                        </button>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="resultsSection" class="hidden">
+                        <h3 class="text-lg font-medium mb-3">Result</h3>
+                        
+                        <!-- Result Tabs -->
+                        <div class="flex border-b mb-4">
+                            <button onclick="showResultTab('response')" id="responseTab" class="px-4 py-2 tab-active">Response</button>
+                            <button onclick="showResultTab('preview')" id="previewTab" class="px-4 py-2">Preview</button>
+                            <button onclick="showResultTab('code')" id="codeTab" class="px-4 py-2">Code Example</button>
+                        </div>
+
+                        <!-- Response Tab -->
+                        <div id="responseContent" class="bg-gray-50 rounded-lg p-4">
+                            <pre id="resultJson" class="json-editor overflow-auto max-h-96"></pre>
+                        </div>
+
+                        <!-- Preview Tab -->
+                        <div id="previewContent" class="hidden">
+                            <div id="qrPreview" class="qr-preview text-center p-4"></div>
+                        </div>
+
+                        <!-- Code Tab -->
+                        <div id="codeContent" class="hidden">
+                            <pre><code id="codeExample" class="language-typescript"></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div id="errorSection" class="hidden">
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h4 class="text-red-800 font-medium mb-2">Error</h4>
+                            <p id="errorMessage" class="text-red-600"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Type Reference -->
+        <div class="mt-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">QR Code Types Reference</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">TEXT</div>
+                    <div class="text-sm text-gray-500">Plain text content</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">WEBSITE</div>
+                    <div class="text-sm text-gray-500">URLs and web links</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">WIFI</div>
+                    <div class="text-sm text-gray-500">WiFi network credentials</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">EMAIL</div>
+                    <div class="text-sm text-gray-500">Email composition</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">PHONE</div>
+                    <div class="text-sm text-gray-500">Phone numbers</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">SMS</div>
+                    <div class="text-sm text-gray-500">SMS messages</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">VCARD</div>
+                    <div class="text-sm text-gray-500">Contact cards</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">LOCATION</div>
+                    <div class="text-sm text-gray-500">GPS coordinates</div>
+                </div>
+                <div class="border rounded-lg p-3">
+                    <div class="font-medium">EVENT</div>
+                    <div class="text-sm text-gray-500">Calendar events</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="./playground.js"></script>
+</body>
+</html>
