@@ -1,6 +1,7 @@
 # Current Version: 0.0.1
 
 ## Release Date: July 12, 2024
+## Last Updated: July 12, 2025
 
 ## Version Summary
 Initial release of QRCode Studio - A comprehensive Capacitor plugin for QR code scanning and generation.
@@ -53,11 +54,46 @@ Initial release of QRCode Studio - A comprehensive Capacitor plugin for QR code 
 - Example implementations
 - TypeScript definitions
 
+## Recent Updates (Post-Release)
+- Added comprehensive unit tests using Vitest
+- Added component tests for QRScanner, QRGenerator, and QRStudio
+- Added test coverage for utility functions and QR data formatting
+- Set up testing infrastructure with proper mocks and setup
+- Set up GitHub Actions CI/CD pipeline with:
+  - Automated testing on multiple Node.js versions
+  - Code quality checks (ESLint, Prettier, TypeScript)
+  - Security vulnerability scanning
+  - Code coverage reporting with Codecov
+  - Automated releases and npm publishing
+  - PR preview deployments
+  - Dependabot for dependency updates
+- Added GitHub templates for issues and pull requests
+- Added comprehensive E2E tests using Cypress:
+  - QR Scanner E2E tests with mock camera permissions
+  - QR Generator E2E tests for all QR types
+  - QR Studio E2E tests for design features
+  - QR History E2E tests for data persistence
+- Integrated E2E tests into CI/CD pipeline
+- Added E2E test scripts to package.json
+- Created comprehensive video tutorial documentation with:
+  - 6 planned video tutorials covering all major features
+  - Production guidelines and script outlines
+  - Hosting and distribution strategy
+- Added interactive examples documentation with:
+  - 5 CodeSandbox examples for key features
+  - Interactive playground components
+  - Real-world use cases and integration examples
+- Created dedicated documentation site plan with:
+  - Docusaurus 3.x implementation
+  - Interactive API explorer
+  - Live code playground
+  - Multi-language support (i18n)
+  - SEO optimization
+
 ## Known Limitations
 - Native iOS/Android implementations not included
 - Some export formats (PDF, GIF, EPS, WMF) require additional libraries
 - Analytics and landing pages need backend implementation
-- No unit tests in initial release
 
 ## Breaking Changes
 None - Initial release
