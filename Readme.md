@@ -13,7 +13,7 @@
 ## 🚀 Features
 
 - **📷 QR Code Scanner**: Native camera-based scanning with web fallback
-- **🎨 QR Code Generator**: Support for 17+ different QR code types
+- **🎨 QR Code Generator**: Support for 22+ different QR code types
 - **🎯 Customizable Design**: Colors, logos, frames, and styles
 - **📊 Analytics**: Track scans, locations, and user engagement
 - **💾 Export Options**: PNG, JPG, SVG, PDF, and more

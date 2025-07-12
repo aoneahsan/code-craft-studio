@@ -55,6 +55,3 @@ temp/
 # Lock files (keep only one)
 package-lock.json
 pnpm-lock.yaml
-
-
-app-project-documentation

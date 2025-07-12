@@ -4,207 +4,534 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🚀 QRCode Studio Setup Script');
-console.log('============================\n');
+console.log('🚀 QRCode Studio Setup\n');
 
-const projectRoot = process.cwd();
-const isCapacitorProject = fs.existsSync(path.join(projectRoot, 'capacitor.config.json')) ||
-                          fs.existsSync(path.join(projectRoot, 'capacitor.config.ts'));
+// Colors for console output
+const colors = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  red: '\x1b[31m'
+};
 
-if (!isCapacitorProject) {
-  console.warn('⚠️  This doesn\'t appear to be a Capacitor project.');
-  console.log('Make sure you have initialized Capacitor first with: npx cap init\n');
+function log(message, color = 'reset') {
+  console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
-console.log('📦 Installing QRCode Studio plugin...\n');
+function createFile(filePath, content) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(filePath, content);
+  log(`✓ Created ${filePath}`, 'green');
+}
 
-// Check if using npm or yarn
-const packageLockExists = fs.existsSync(path.join(projectRoot, 'package-lock.json'));
-const yarnLockExists = fs.existsSync(path.join(projectRoot, 'yarn.lock'));
-const packageManager = yarnLockExists ? 'yarn' : 'npm';
-
-try {
-  // Install the plugin
-  console.log(`Using ${packageManager} to install dependencies...`);
-  execSync(`${packageManager} ${packageManager === 'yarn' ? 'add' : 'install'} qrcode-studio`, { 
-    stdio: 'inherit' 
+function setupProject() {
+  const projectRoot = process.cwd();
+  
+  log('Setting up QRCode Studio in your project...', 'bright');
+  
+  // 1. Create directory structure
+  log('\n📁 Creating directory structure...', 'blue');
+  const directories = [
+    'src/components/common',
+    'src/components/qr',
+    'src/components/layouts',
+    'src/pages',
+    'src/services/api',
+    'src/services/auth',
+    'src/services/qr',
+    'src/services/analytics',
+    'src/services/storage',
+    'src/hooks',
+    'src/store',
+    'src/utils',
+    'src/types',
+    'src/styles/themes',
+    'src/styles/components',
+    'src/assets/images',
+    'src/assets/icons',
+    'src/assets/fonts',
+    'public/images'
+  ];
+  
+  directories.forEach(dir => {
+    const fullPath = path.join(projectRoot, dir);
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, { recursive: true });
+    }
   });
-
-  // Add iOS platform if not exists
-  if (!fs.existsSync(path.join(projectRoot, 'ios'))) {
-    console.log('\n📱 Adding iOS platform...');
-    execSync('npx cap add ios', { stdio: 'inherit' });
-  }
-
-  // Add Android platform if not exists
-  if (!fs.existsSync(path.join(projectRoot, 'android'))) {
-    console.log('\n🤖 Adding Android platform...');
-    execSync('npx cap add android', { stdio: 'inherit' });
-  }
-
-  // Sync Capacitor
-  console.log('\n🔄 Syncing Capacitor...');
-  execSync('npx cap sync', { stdio: 'inherit' });
-
-  // iOS specific setup
-  console.log('\n🍎 Configuring iOS permissions...');
-  const iosInfoPlistPath = path.join(projectRoot, 'ios/App/App/Info.plist');
   
-  if (fs.existsSync(iosInfoPlistPath)) {
-    let infoPlist = fs.readFileSync(iosInfoPlistPath, 'utf8');
-    
-    // Add camera permission if not exists
-    if (!infoPlist.includes('NSCameraUsageDescription')) {
-      const permissionEntry = `\t<key>NSCameraUsageDescription</key>
-\t<string>This app needs camera access to scan QR codes</string>`;
-      
-      // Insert before closing dict tag
-      infoPlist = infoPlist.replace('</dict>\n</plist>', `${permissionEntry}\n</dict>\n</plist>`);
-      fs.writeFileSync(iosInfoPlistPath, infoPlist);
-      console.log('✅ Added iOS camera permission');
-    }
-  } else {
-    console.log('⚠️  iOS Info.plist not found. Please add camera permissions manually.');
-  }
-
-  // Android specific setup
-  console.log('\n🤖 Configuring Android permissions...');
-  const androidManifestPath = path.join(projectRoot, 'android/app/src/main/AndroidManifest.xml');
+  // 2. Create example components
+  log('\n🎨 Creating example components...', 'blue');
   
-  if (fs.existsSync(androidManifestPath)) {
-    let manifest = fs.readFileSync(androidManifestPath, 'utf8');
-    
-    // Add camera permission if not exists
-    if (!manifest.includes('android.permission.CAMERA')) {
-      const permissionEntry = '\n    <uses-permission android:name="android.permission.CAMERA" />';
-      
-      // Insert after opening manifest tag
-      manifest = manifest.replace('<manifest', `<manifest${permissionEntry}\n`);
-      fs.writeFileSync(androidManifestPath, manifest);
-      console.log('✅ Added Android camera permission');
-    }
-  } else {
-    console.log('⚠️  Android manifest not found. Please add camera permissions manually.');
-  }
+  // HomePage.tsx
+  createFile(path.join(projectRoot, 'src/pages/HomePage.tsx'), `import React from 'react';
+import { Link } from 'react-router-dom';
+import { QRStudio } from 'qrcode-studio';
 
-  // Create example usage file
-  console.log('\n📝 Creating example usage file...');
-  const exampleContent = `import { QRCodeStudio, QRScanner, QRGenerator, QRStudio, QRType } from 'qrcode-studio';
-
-// Example 1: Using the QRScanner component
-export function ScannerExample() {
+export const HomePage: React.FC = () => {
   return (
-    <QRScanner
-      onScan={(result) => {
-        console.log('Scanned:', result.content);
-        console.log('Type:', result.type);
-      }}
-      onError={(error) => {
-        console.error('Scan error:', error);
-      }}
-    />
+    <div className="home-page">
+      <header className="app-header">
+        <h1>QRCode Studio</h1>
+        <p>Scan, Generate, and Manage QR Codes</p>
+      </header>
+      
+      <nav className="quick-actions">
+        <Link to="/scan" className="action-button">
+          <span className="icon">📷</span>
+          <span>Scan QR Code</span>
+        </Link>
+        <Link to="/generate" className="action-button">
+          <span className="icon">✨</span>
+          <span>Generate QR Code</span>
+        </Link>
+        <Link to="/history" className="action-button">
+          <span className="icon">📚</span>
+          <span>History</span>
+        </Link>
+        <Link to="/settings" className="action-button">
+          <span className="icon">⚙️</span>
+          <span>Settings</span>
+        </Link>
+      </nav>
+      
+      <section className="recent-activity">
+        <h2>Recent Activity</h2>
+        <QRStudio
+          config={{
+            allowedTypes: ['website', 'wifi', 'text', 'vcard'],
+            defaultType: 'website',
+          }}
+          features={{
+            scanner: true,
+            generator: true,
+            history: true,
+          }}
+        />
+      </section>
+    </div>
   );
-}
+};
+`);
 
-// Example 2: Using the QRGenerator component
-export function GeneratorExample() {
-  const websiteData = {
-    url: 'https://example.com',
-    title: 'My Website',
+  // ScannerPage.tsx
+  createFile(path.join(projectRoot, 'src/pages/ScannerPage.tsx'), `import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { QRScanner } from 'qrcode-studio';
+
+export const ScannerPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [scanResult, setScanResult] = useState<any>(null);
+  
+  const handleScan = (result: any) => {
+    setScanResult(result);
+    // Save to history
+    const history = JSON.parse(localStorage.getItem('qr-history') || '[]');
+    history.unshift({
+      ...result,
+      timestamp: new Date().toISOString(),
+      action: 'scanned'
+    });
+    localStorage.setItem('qr-history', JSON.stringify(history.slice(0, 100)));
   };
-
+  
   return (
-    <QRGenerator
-      type={QRType.WEBSITE}
-      data={websiteData}
-      design={{
-        colors: {
-          dark: '#000000',
-          light: '#FFFFFF',
-        },
-      }}
-      size={300}
-      onGenerate={(result) => {
-        console.log('Generated QR Code:', result);
-      }}
-    />
+    <div className="scanner-page">
+      <header className="page-header">
+        <button onClick={() => navigate(-1)} className="back-button">
+          ← Back
+        </button>
+        <h1>Scan QR Code</h1>
+      </header>
+      
+      <div className="scanner-container">
+        <QRScanner
+          onScan={handleScan}
+          onError={(error) => console.error('Scan error:', error)}
+        />
+      </div>
+      
+      {scanResult && (
+        <div className="scan-result">
+          <h2>Scan Result</h2>
+          <p>Type: {scanResult.type}</p>
+          <p>Content: {scanResult.content}</p>
+          <button 
+            onClick={() => setScanResult(null)}
+            className="action-button"
+          >
+            Scan Another
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+`);
+
+  // Store setup
+  createFile(path.join(projectRoot, 'src/store/qrStore.ts'), `import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export interface QRHistoryItem {
+  id: string;
+  type: string;
+  content: string;
+  data: any;
+  timestamp: string;
+  action: 'scanned' | 'generated';
+  isFavorite?: boolean;
+}
+
+interface QRStore {
+  history: QRHistoryItem[];
+  favorites: string[];
+  addToHistory: (item: Omit<QRHistoryItem, 'id' | 'timestamp'>) => void;
+  toggleFavorite: (id: string) => void;
+  clearHistory: () => void;
+  removeFromHistory: (id: string) => void;
+}
+
+export const useQRStore = create<QRStore>()(
+  persist(
+    (set) => ({
+      history: [],
+      favorites: [],
+      
+      addToHistory: (item) => set((state) => ({
+        history: [
+          {
+            ...item,
+            id: Date.now().toString(),
+            timestamp: new Date().toISOString(),
+          },
+          ...state.history,
+        ].slice(0, 100), // Keep last 100 items
+      })),
+      
+      toggleFavorite: (id) => set((state) => ({
+        favorites: state.favorites.includes(id)
+          ? state.favorites.filter(fId => fId !== id)
+          : [...state.favorites, id],
+        history: state.history.map(item =>
+          item.id === id
+            ? { ...item, isFavorite: !item.isFavorite }
+            : item
+        ),
+      })),
+      
+      clearHistory: () => set({ history: [], favorites: [] }),
+      
+      removeFromHistory: (id) => set((state) => ({
+        history: state.history.filter(item => item.id !== id),
+        favorites: state.favorites.filter(fId => fId !== id),
+      })),
+    }),
+    {
+      name: 'qr-storage',
+    }
+  )
+);
+`);
+
+  // App.tsx with routing
+  createFile(path.join(projectRoot, 'src/App.tsx'), `import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import 'qrcode-studio/src/styles/qrcode-studio.css';
+import './styles/app.css';
+
+// Lazy load pages for better performance
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const ScannerPage = lazy(() => import('./pages/ScannerPage').then(m => ({ default: m.ScannerPage })));
+const GeneratorPage = lazy(() => import('./pages/GeneratorPage').then(m => ({ default: m.GeneratorPage })));
+const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })));
+const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+
+const Loading = () => (
+  <div className="loading-container">
+    <div className="spinner"></div>
+    <p>Loading...</p>
+  </div>
+);
+
+function App() {
+  return (
+    <BrowserRouter>
+      <div className="app">
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/scan" element={<ScannerPage />} />
+            <Route path="/generate" element={<GeneratorPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </div>
+    </BrowserRouter>
   );
 }
 
-// Example 3: Using the full QRStudio component
-export function StudioExample() {
-  return (
-    <QRStudio
-      config={{
-        allowedTypes: [QRType.WEBSITE, QRType.WIFI, QRType.VCARD],
-        defaultType: QRType.WEBSITE,
-      }}
-      theme={{
-        primary: '#007AFF',
-        mode: 'light',
-      }}
-      features={{
-        scanner: true,
-        generator: true,
-        history: true,
-        analytics: true,
-      }}
-      onSave={(result) => {
-        console.log('Saved QR Code:', result);
-      }}
-      onScan={(result) => {
-        console.log('Scanned QR Code:', result);
-      }}
-    />
-  );
+export default App;
+`);
+
+  // Basic styles
+  createFile(path.join(projectRoot, 'src/styles/app.css'), `:root {
+  --primary-color: #007AFF;
+  --secondary-color: #5856D6;
+  --success-color: #34C759;
+  --warning-color: #FF9500;
+  --danger-color: #FF3B30;
+  --background: #F2F2F7;
+  --surface: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: #6C6C70;
+  --border-color: #C6C6C8;
 }
 
-// Example 4: Using the plugin API directly
-async function pluginExample() {
-  // Check permissions
-  const permissions = await QRCodeStudio.checkPermissions();
-  console.log('Camera permission:', permissions.camera);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --surface: #1C1C1E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #8E8E93;
+    --border-color: #38383A;
+  }
+}
 
-  // Request permissions if needed
-  if (permissions.camera !== 'granted') {
-    await QRCodeStudio.requestPermissions();
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-header p {
+  color: var(--text-secondary);
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 1rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 2rem 1rem;
+}
+
+.action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-button .icon {
+  font-size: 2rem;
+}
+
+/* Scanner */
+.scanner-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}
+
+.scan-result {
+  padding: 2rem 1rem;
+  background: var(--surface);
+  border-top: 1px solid var(--border-color);
+}
+
+.scan-result h2 {
+  margin-bottom: 1rem;
+}
+
+.scan-result p {
+  margin-bottom: 0.5rem;
+  word-break: break-all;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+`);
+
+  // Package.json additions
+  log('\n📦 Updating package.json...', 'blue');
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  if (fs.existsSync(packageJsonPath)) {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    
+    // Add scripts if not present
+    if (!packageJson.scripts) packageJson.scripts = {};
+    Object.assign(packageJson.scripts, {
+      'ios': 'yarn build && npx cap copy && npx cap open ios',
+      'android': 'yarn build && npx cap copy && npx cap open android',
+      'sync': 'npx cap sync',
+      'serve': 'yarn start'
+    });
+    
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+    log('✓ Updated package.json', 'green');
   }
 
-  // Generate a QR code
-  const qrCode = await QRCodeStudio.generate({
-    type: QRType.WEBSITE,
-    data: { url: 'https://example.com' },
-    size: 300,
+  // Create example env file
+  createFile(path.join(projectRoot, '.env.example'), `# API Configuration
+REACT_APP_API_URL=http://localhost:3000
+REACT_APP_API_KEY=your-api-key
+
+# Analytics
+REACT_APP_ANALYTICS_KEY=your-analytics-key
+
+# Features
+REACT_APP_ENABLE_ANALYTICS=true
+REACT_APP_ENABLE_CLOUD_SYNC=false
+`);
+
+  // Create capacitor.config.ts if not exists
+  if (!fs.existsSync(path.join(projectRoot, 'capacitor.config.ts'))) {
+    createFile(path.join(projectRoot, 'capacitor.config.ts'), `import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.yourcompany.qrcodeapp',
+  appName: 'QRCode Studio',
+  webDir: 'build',
+  bundledWebRuntime: false,
+  plugins: {
+    Camera: {
+      presentationStyle: 'fullscreen',
+    },
+    Preferences: {
+      group: 'qrcode-studio',
+    },
+  },
+};
+
+export default config;
+`);
+  }
+
+  // Create placeholder pages
+  const pages = ['GeneratorPage', 'HistoryPage', 'SettingsPage'];
+  pages.forEach(page => {
+    const pagePath = path.join(projectRoot, `src/pages/${page}.tsx`);
+    if (!fs.existsSync(pagePath)) {
+      createFile(pagePath, `import React from 'react';
+
+export const ${page}: React.FC = () => {
+  return (
+    <div className="${page.toLowerCase().replace('page', '-page')}">
+      <h1>${page.replace('Page', '')}</h1>
+      <p>This page is under construction.</p>
+    </div>
+  );
+};
+`);
+    }
   });
 
-  console.log('Generated QR:', qrCode);
-
-  // Save QR code
-  const saved = await QRCodeStudio.saveQRCode({
-    qrCode,
-    fileName: 'my-qr-code',
-    format: 'png',
-  });
-
-  console.log('Saved to:', saved.uri);
+  log('\n✅ Setup complete!', 'green');
+  log('\nNext steps:', 'bright');
+  log('1. Install dependencies: yarn install', 'yellow');
+  log('2. Add iOS platform: npx cap add ios', 'yellow');
+  log('3. Add Android platform: npx cap add android', 'yellow');
+  log('4. Run the app: yarn start', 'yellow');
+  log('\nFor more information, check the documentation in app-project-documentation/', 'blue');
 }
-`;
 
-  fs.writeFileSync(path.join(projectRoot, 'qrcode-studio-examples.tsx'), exampleContent);
-
-  console.log('\n✅ Setup completed successfully!\n');
-  console.log('📖 Next steps:');
-  console.log('1. Check qrcode-studio-examples.tsx for usage examples');
-  console.log('2. Import and use the components in your app');
-  console.log('3. Run "npx cap open ios" or "npx cap open android" to test on devices\n');
-  console.log('📚 Documentation: https://github.com/aoneahsan/qrcode-studio');
-  console.log('🐛 Issues: https://github.com/aoneahsan/qrcode-studio/issues\n');
-
+// Run setup
+try {
+  setupProject();
 } catch (error) {
-  console.error('\n❌ Setup failed:', error.message);
-  console.log('\nPlease try manual setup:');
-  console.log(`1. ${packageManager} ${packageManager === 'yarn' ? 'add' : 'install'} qrcode-studio`);
-  console.log('2. npx cap sync');
-  console.log('3. Add camera permissions to iOS and Android manually');
+  log(`\n❌ Error during setup: ${error.message}`, 'red');
   process.exit(1);
 }
