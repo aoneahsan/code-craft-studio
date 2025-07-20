@@ -48,101 +48,99 @@ export function isValidQRSize(size: number): boolean {
  * Validates QR data based on type
  */
 export function validateQRData(type: QRType, data: QRData): boolean {
+  const dataAny = data as any;
   switch (type) {
     case QRType.TEXT:
-      return Boolean(data.text && data.text.length > 0);
+      return Boolean(dataAny.text && dataAny.text.length > 0);
       
     case QRType.WEBSITE:
-      return Boolean(data.url && isValidUrl(data.url));
+      return Boolean(dataAny.url && isValidUrl(dataAny.url));
       
     case QRType.EMAIL:
-      return Boolean(data.to && isValidEmail(data.to));
+      return Boolean(dataAny.to && isValidEmail(dataAny.to));
       
     case QRType.PHONE:
-      return Boolean(data.phoneNumber && isValidPhoneNumber(data.phoneNumber));
+      return Boolean(dataAny.phoneNumber && isValidPhoneNumber(dataAny.phoneNumber));
       
     case QRType.SMS:
-      return Boolean(data.phoneNumber && isValidPhoneNumber(data.phoneNumber));
+      return Boolean(dataAny.phoneNumber && isValidPhoneNumber(dataAny.phoneNumber));
       
     case QRType.WHATSAPP:
-      return Boolean(data.phoneNumber && isValidPhoneNumber(data.phoneNumber));
+      return Boolean(dataAny.phoneNumber && isValidPhoneNumber(dataAny.phoneNumber));
       
     case QRType.WIFI:
-      return Boolean(data.ssid && data.ssid.length > 0);
+      return Boolean(dataAny.ssid && dataAny.ssid.length > 0);
       
     case QRType.VCARD:
-    case QRType.MECARD:
       return Boolean(
-        (data.firstName || data.lastName) &&
-        (data.phone || data.email)
+        (dataAny.firstName || dataAny.lastName) &&
+        (dataAny.phone || dataAny.email)
       );
       
     case QRType.LOCATION:
       return Boolean(
-        typeof data.latitude === 'number' &&
-        typeof data.longitude === 'number' &&
-        data.latitude >= -90 && data.latitude <= 90 &&
-        data.longitude >= -180 && data.longitude <= 180
+        typeof dataAny.latitude === 'number' &&
+        typeof dataAny.longitude === 'number' &&
+        dataAny.latitude >= -90 && dataAny.latitude <= 90 &&
+        dataAny.longitude >= -180 && dataAny.longitude <= 180
       );
       
     case QRType.EVENT:
       return Boolean(
-        data.title && 
-        data.startDate &&
-        isValidDate(data.startDate)
+        dataAny.title && 
+        dataAny.startDate &&
+        isValidDate(dataAny.startDate)
       );
       
-    case QRType.CRYPTO:
-      return Boolean(data.address && data.address.length > 0);
       
     case QRType.SOCIAL_MEDIA:
       return Boolean(
-        data.facebook || data.instagram || data.twitter ||
-        data.linkedin || data.youtube || data.tiktok
+        dataAny.facebook || dataAny.instagram || dataAny.twitter ||
+        dataAny.linkedin || dataAny.youtube || dataAny.tiktok
       );
       
     case QRType.PDF:
     case QRType.VIDEO:
     case QRType.MP3:
-      return Boolean(data.url && isValidUrl(data.url));
+      return Boolean(dataAny.url && isValidUrl(dataAny.url));
       
     case QRType.FACEBOOK:
     case QRType.INSTAGRAM:
       return Boolean(
-        (data.pageUrl && isValidUrl(data.pageUrl)) ||
-        (data.profileUrl && isValidUrl(data.profileUrl))
+        (dataAny.pageUrl && isValidUrl(dataAny.pageUrl)) ||
+        (dataAny.profileUrl && isValidUrl(dataAny.profileUrl))
       );
       
     case QRType.IMAGES:
       return Boolean(
-        data.images && 
-        Array.isArray(data.images) && 
-        data.images.length > 0
+        dataAny.images && 
+        Array.isArray(dataAny.images) && 
+        dataAny.images.length > 0
       );
       
     case QRType.MENU:
       return Boolean(
-        data.restaurantName &&
-        data.categories &&
-        Array.isArray(data.categories) &&
-        data.categories.length > 0
+        dataAny.restaurantName &&
+        dataAny.categories &&
+        Array.isArray(dataAny.categories) &&
+        dataAny.categories.length > 0
       );
       
     case QRType.BUSINESS:
-      return Boolean(data.name && data.name.length > 0);
+      return Boolean(dataAny.name && dataAny.name.length > 0);
       
     case QRType.APPS:
-      return Boolean(data.appStoreUrl || data.playStoreUrl);
+      return Boolean(dataAny.appStoreUrl || dataAny.playStoreUrl);
       
     case QRType.LINKS_LIST:
       return Boolean(
-        data.links &&
-        Array.isArray(data.links) &&
-        data.links.length > 0
+        dataAny.links &&
+        Array.isArray(dataAny.links) &&
+        dataAny.links.length > 0
       );
       
     case QRType.COUPON:
-      return Boolean(data.code && data.code.length > 0);
+      return Boolean(dataAny.code && dataAny.code.length > 0);
       
     default:
       return false;

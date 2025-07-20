@@ -23,5 +23,5 @@
     "target": "ES2017"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "android", "ios", "dist", "example"]
+  "exclude": ["node_modules", "android", "ios", "dist", "example", "src/tests", "cypress"]
 }
