@@ -39,7 +39,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
         camera: permissionStatus.state === 'granted' ? 'granted' : 
                 permissionStatus.state === 'denied' ? 'denied' : 'prompt'
       };
-    } catch (error) {
+    } catch {
       // Fallback for browsers that don't support permissions API
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -56,7 +56,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       stream.getTracks().forEach(track => track.stop());
       return { camera: 'granted' };
-    } catch (error) {
+    } catch {
       return { camera: 'denied' };
     }
   }

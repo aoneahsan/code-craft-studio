@@ -122,7 +122,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({
         fileName: `qrcode_${type}_${Date.now()}`,
         format: selectedFormat,
       });
-    } catch (err) {
+    } catch {
       setError('Failed to download QR code');
     }
   };

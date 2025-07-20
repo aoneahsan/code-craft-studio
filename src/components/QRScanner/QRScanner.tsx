@@ -49,7 +49,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
     try {
       const result = await QRCodeStudio.checkPermissions();
       setPermissionStatus(result.camera);
-    } catch (err) {
+    } catch {
       setError('Failed to check camera permissions');
     }
   };
@@ -61,7 +61,7 @@ export const QRScanner: React.FC<QRScannerProps> = ({
       if (result.camera === 'granted') {
         startScanning();
       }
-    } catch (err) {
+    } catch {
       setError('Failed to request camera permissions');
     }
   };
