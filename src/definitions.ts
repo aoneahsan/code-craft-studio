@@ -108,6 +108,47 @@ export interface ScanOptions {
    * Formats to scan (default: all)
    */
   formats?: BarcodeFormat[];
+  
+  /**
+   * Video element styling options for web platform
+   */
+  videoStyle?: {
+    position?: string;
+    top?: string;
+    left?: string;
+    width?: string;
+    height?: string;
+    objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
+    zIndex?: string;
+  };
+  
+  /**
+   * Calculate scan region as QR-Scanner.ScanRegion based on video dimensions
+   */
+  calculateScanRegion?: (video: HTMLVideoElement) => { x: number; y: number; width: number; height: number };
+  
+  /**
+   * Overlay element to display on top of video (web only)
+   */
+  overlay?: HTMLDivElement;
+  
+  /**
+   * Highlight code outline on scan (web only)
+   * @default true
+   */
+  highlightCodeOutline?: boolean;
+  
+  /**
+   * Highlight scan region (web only)
+   * @default true
+   */
+  highlightScanRegion?: boolean;
+  
+  /**
+   * Max scans per second (web only)
+   * @default 5
+   */
+  maxScansPerSecond?: number;
 }
 
 /**
@@ -422,7 +463,8 @@ export interface GenerateOptions {
   size?: number;
   
   /**
-   * Error correction level
+   * Error correction level (L=7%, M=15%, Q=25%, H=30%)
+   * @default 'M'
    */
   errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
   
@@ -430,6 +472,43 @@ export interface GenerateOptions {
    * Landing page options
    */
   landingPage?: LandingPageOptions;
+  
+  /**
+   * QR Code version. If not specified the more suitable value will be calculated.
+   * Valid values: 1-40
+   */
+  version?: number;
+  
+  /**
+   * Mask pattern used to mask the symbol (0-7).
+   * If not specified the more suitable value will be calculated.
+   */
+  maskPattern?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  
+  /**
+   * Define how much wide the quiet zone should be.
+   * @default 4
+   */
+  margin?: number;
+  
+  /**
+   * Scale factor. A value of 1 means 1px per modules (black dots).
+   * @default 4
+   */
+  scale?: number;
+  
+  /**
+   * Forces a specific width for the output image.
+   * If width is too small to contain the qr symbol, this option will be ignored.
+   * Takes precedence over `scale`.
+   */
+  width?: number;
+  
+  /**
+   * Helper function used internally to convert a kanji to its Shift JIS value.
+   * Provide this function if you need support for Kanji mode.
+   */
+  toSJISFunc?: (codePoint: string) => number;
 }
 
 /**
@@ -647,16 +726,20 @@ export interface SaveOptions {
   directory?: Directory;
 }
 
+/**
+ * Export formats for QR codes
+ * Note: PDF, GIF, EPS, and WMF formats require additional libraries and are not yet implemented
+ */
 export type ExportFormat = 
-  | 'png'
-  | 'jpg'
-  | 'svg'
-  | 'pdf'
-  | 'gif'
-  | 'json'
-  | 'webp'
-  | 'eps'
-  | 'wmf';
+  | 'png'    // Supported on all platforms
+  | 'jpg'    // Supported on all platforms
+  | 'svg'    // Supported on all platforms
+  | 'pdf'    // Not yet implemented - requires additional library
+  | 'gif'    // Not yet implemented - requires additional library
+  | 'json'   // Supported on all platforms
+  | 'webp'   // Supported on modern browsers
+  | 'eps'    // Not yet implemented - requires additional library
+  | 'wmf';   // Not yet implemented - requires additional library
 
 export enum Directory {
   Documents = 'DOCUMENTS',
@@ -934,6 +1017,44 @@ export interface QRGeneratorProps {
    * Show share button
    */
   showShare?: boolean;
+  
+  /**
+   * Error correction level (L=7%, M=15%, Q=25%, H=30%)
+   * @default 'M'
+   */
+  errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
+  
+  /**
+   * QR Code version (1-40)
+   */
+  version?: number;
+  
+  /**
+   * Mask pattern (0-7)
+   */
+  maskPattern?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  
+  /**
+   * Quiet zone margin
+   * @default 4
+   */
+  margin?: number;
+  
+  /**
+   * Scale factor
+   * @default 4
+   */
+  scale?: number;
+  
+  /**
+   * Force specific width (overrides scale)
+   */
+  width?: number;
+  
+  /**
+   * Kanji support function
+   */
+  toSJISFunc?: (codePoint: string) => number;
 }
 
 export interface QRStudioProps {

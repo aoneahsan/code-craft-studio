@@ -9,3 +9,10 @@ const QRCodeStudio = registerPlugin<QRCodeStudioPlugin>('QRCodeStudio', {
 export * from './definitions';
 export * from './components';
 export { QRCodeStudio };
+
+// Export validators for advanced users
+export { validateQRData, QRValidationError } from './core/validators/qr-validators';
+
+// Export form utilities
+export { qrFormFields, qrTypeInfo } from './utils/qr-forms';
+export type { FormFieldProps } from './utils/qr-forms';

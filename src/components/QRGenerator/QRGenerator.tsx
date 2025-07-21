@@ -19,6 +19,13 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({
   style,
   showDownload = true,
   showShare = true,
+  errorCorrectionLevel = 'M',
+  version,
+  maskPattern,
+  margin,
+  scale,
+  width,
+  toSJISFunc,
 }) => {
   const [qrCode, setQrCode] = useState<QRCodeResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -45,7 +52,13 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({
         data,
         design,
         size,
-        errorCorrectionLevel: 'M',
+        errorCorrectionLevel,
+        version,
+        maskPattern,
+        margin,
+        scale,
+        width,
+        toSJISFunc,
       });
 
       setQrCode(result);

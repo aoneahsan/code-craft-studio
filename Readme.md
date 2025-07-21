@@ -10,16 +10,54 @@
   [![Platform Support](https://img.shields.io/badge/platforms-Web%20%7C%20iOS%20%7C%20Android-blue.svg)](https://capacitorjs.com/)
 </div>
 
+## 📚 Documentation
+
+| Resource | Description |
+|----------|-------------|
+| 📖 [API Reference](./docs/API.md) | Complete API documentation with all methods and options |
+| 🚀 [Quick Start Guide](./app-project-documentation/QUICKSTART.md) | Get started in 5 minutes |
+| 🏗️ [Architecture](./app-project-documentation/ARCHITECTURE.md) | Plugin architecture and design decisions |
+| ✨ [Features](./app-project-documentation/FEATURES.md) | Detailed feature documentation |
+| 🎮 [Interactive Playground](./app-project-documentation/api-playground/) | Try the API in your browser |
+| 📱 [Platform Setup](./app-project-documentation/platform-setup/) | iOS and Android configuration |
+| 🎥 [Video Tutorials](./app-project-documentation/tutorials/video-tutorials.md) | Step-by-step video guides |
+
 ## 🚀 Features
 
+### Core Features
 - **📷 QR Code Scanner**: Native camera-based scanning with web fallback
-- **🎨 QR Code Generator**: Support for 22+ different QR code types
-- **🎯 Customizable Design**: Colors, logos, frames, and styles
-- **📊 Analytics**: Track scans, locations, and user engagement
-- **💾 Export Options**: PNG, JPG, SVG, PDF, and more
-- **🌐 Landing Pages**: Create custom landing pages for QR codes
+- **🎨 QR Code Generator**: Generate QR codes with full customization options
+- **📊 Analytics & History**: Track scans, locations, and user engagement
+- **💾 Multiple Export Formats**: PNG, JPG, SVG, JSON, WebP (PDF, GIF, EPS, WMF coming soon)
 - **⚛️ React Components**: Ready-to-use components for quick integration
 - **📱 Cross-Platform**: Works on Web, iOS, and Android
+- **🔌 Plugin Architecture**: Easy to extend and customize
+
+### 22+ Supported QR Code Types
+- **🌐 Web & Links**: Website, PDF, Images Gallery, Video, Links List
+- **📱 Social Media**: Facebook, Instagram, WhatsApp, Social Media Hub
+- **💼 Business**: vCard, Business Info, Menu, Coupon
+- **🔧 Utilities**: WiFi, MP3, Apps, Text, Email, SMS, Phone, Location, Event
+- **🎯 Custom**: Any custom data format
+
+### Advanced Options
+- **🎨 Design Customization**: 
+  - Custom colors (foreground/background)
+  - Logo embedding
+  - Frame styles
+  - Margin control
+  - Error correction levels (L, M, Q, H)
+- **⚙️ Generation Options**:
+  - QR version control (1-40)
+  - Mask pattern selection (0-7)
+  - Scale and size control
+  - Kanji character support
+- **📸 Scanner Options**:
+  - Front/back camera switching
+  - Torch/flashlight control
+  - Custom scan regions
+  - Video styling options
+  - Scan delay configuration
 
 ## 📦 Installation
 
@@ -378,6 +416,74 @@ console.log('Device types:', analytics.devices);
 
 ### Web
 - Camera/getUserMedia permission for scanning
+
+## ⚙️ Advanced Configuration
+
+### Generation Options
+
+All options are exposed to give you full control over QR code generation:
+
+```typescript
+await QRCodeStudio.generate({
+  type: 'website',
+  data: { url: 'https://example.com' },
+  
+  // Basic options
+  size: 300,                    // Image size in pixels
+  errorCorrectionLevel: 'M',    // L (7%), M (15%), Q (25%), H (30%)
+  
+  // Advanced options
+  version: undefined,           // QR version (1-40, auto if undefined)
+  maskPattern: undefined,       // Mask pattern (0-7, auto if undefined)
+  margin: 4,                    // Quiet zone size
+  scale: 4,                     // Scale factor (pixels per module)
+  width: undefined,             // Force specific width (overrides scale)
+  toSJISFunc: undefined,        // Kanji encoding function
+  
+  // Design options
+  design: {
+    colors: { dark: '#000000', light: '#FFFFFF' },
+    logo: { src: 'logo.png', size: 60 },
+    // ... other design options
+  }
+});
+```
+
+### Scanner Options
+
+Configure the scanner with extensive options:
+
+```typescript
+await QRCodeStudio.startScan({
+  // Camera options
+  camera: 'back',               // 'front' or 'back'
+  showTorchButton: true,        // Show flashlight toggle
+  showFlipCameraButton: true,   // Show camera switch button
+  
+  // Performance options
+  scanDelay: 200,               // Milliseconds between scans
+  maxScansPerSecond: 5,         // Alternative to scanDelay
+  
+  // Web-specific options
+  videoStyle: {                 // Custom video element styling
+    position: 'fixed',
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover'
+  },
+  highlightCodeOutline: true,   // Highlight detected QR codes
+  highlightScanRegion: true,    // Highlight scan area
+  calculateScanRegion: (video) => ({  // Custom scan region
+    x: video.videoWidth * 0.25,
+    y: video.videoHeight * 0.25,
+    width: video.videoWidth * 0.5,
+    height: video.videoHeight * 0.5
+  }),
+  
+  // Format filtering
+  formats: [BarcodeFormat.QR_CODE]  // Scan only specific formats
+});
+```
 
 ## 🧪 Testing
 

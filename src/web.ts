@@ -66,17 +66,19 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       // Create video element if not exists
       if (!this.videoElement) {
         this.videoElement = document.createElement('video');
-        this.videoElement.style.position = 'fixed';
-        this.videoElement.style.top = '0';
-        this.videoElement.style.left = '0';
-        this.videoElement.style.width = '100%';
-        this.videoElement.style.height = '100%';
-        this.videoElement.style.objectFit = 'cover';
-        this.videoElement.style.zIndex = '999999';
+        // Apply custom video styles or defaults
+        const videoStyle = options?.videoStyle || {};
+        this.videoElement.style.position = videoStyle.position || 'fixed';
+        this.videoElement.style.top = videoStyle.top || '0';
+        this.videoElement.style.left = videoStyle.left || '0';
+        this.videoElement.style.width = videoStyle.width || '100%';
+        this.videoElement.style.height = videoStyle.height || '100%';
+        this.videoElement.style.objectFit = videoStyle.objectFit || 'cover';
+        this.videoElement.style.zIndex = videoStyle.zIndex || '999999';
         document.body.appendChild(this.videoElement);
       }
 
-      // Initialize scanner
+      // Initialize scanner with all available options
       this.scanner = new QrScanner(
         this.videoElement,
         (result: QrScanner.ScanResult) => {
@@ -92,7 +94,12 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
         },
         {
           preferredCamera: options?.camera || 'environment',
-          maxScansPerSecond: options?.scanDelay ? 1000 / options.scanDelay : 5,
+          maxScansPerSecond: options?.maxScansPerSecond !== undefined ? options.maxScansPerSecond : 
+                            (options?.scanDelay ? 1000 / options.scanDelay : 5),
+          calculateScanRegion: options?.calculateScanRegion,
+          overlay: options?.overlay,
+          highlightCodeOutline: options?.highlightCodeOutline !== false,
+          highlightScanRegion: options?.highlightScanRegion !== false,
         }
       );
 
@@ -125,21 +132,29 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       const qrData = this.formatQRData(options.type, options.data);
       const size = options.size || 300;
 
-      // Generate QR code options
+      // Generate QR code options with all user-provided options
       const qrOptions: QRCode.QRCodeToDataURLOptions = {
-        width: size,
-        margin: options.design?.margin || 2,
+        // Use user-provided width or size, with size as fallback
+        width: options.width || size,
+        // Use user-provided margin or design margin, with default of 4
+        margin: options.margin !== undefined ? options.margin : (options.design?.margin || 4),
+        // Use user-provided scale if width is not specified
+        scale: options.width ? undefined : (options.scale || 4),
         color: {
           dark: options.design?.colors?.dark || '#000000',
           light: options.design?.colors?.light || '#FFFFFF',
         },
         errorCorrectionLevel: options.errorCorrectionLevel || 'M',
+        // Pass through additional options
+        version: options.version,
+        maskPattern: options.maskPattern,
+        toSJISFunc: options.toSJISFunc,
       };
 
       // Generate base64 data URL
       const dataUrl = await QRCode.toDataURL(qrData, qrOptions);
 
-      // Generate SVG
+      // Generate SVG with same options
       const svg = await QRCode.toString(qrData, {
         ...qrOptions,
         type: 'svg',
