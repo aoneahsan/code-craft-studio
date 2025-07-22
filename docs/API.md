@@ -757,3 +757,112 @@ async function generateBusinessCard() {
   }
 }
 ```
+
+## Utility Functions
+
+QRCode Studio exports several utility functions to help with data validation:
+
+### Validators
+
+#### isValidUrl(url: string): boolean
+
+Validates if a string is a valid HTTP/HTTPS URL.
+
+```typescript
+import { isValidUrl } from 'qrcode-studio';
+
+console.log(isValidUrl('https://example.com')); // true
+console.log(isValidUrl('not-a-url')); // false
+```
+
+#### isValidEmail(email: string): boolean
+
+Validates if a string is a valid email address.
+
+```typescript
+import { isValidEmail } from 'qrcode-studio';
+
+console.log(isValidEmail('user@example.com')); // true
+console.log(isValidEmail('invalid-email')); // false
+```
+
+#### isValidPhoneNumber(phone: string): boolean
+
+Validates if a string is a valid international phone number (E.164 format).
+
+```typescript
+import { isValidPhoneNumber } from 'qrcode-studio';
+
+console.log(isValidPhoneNumber('+1234567890')); // true
+console.log(isValidPhoneNumber('123456')); // false
+```
+
+#### isValidHexColor(color: string): boolean
+
+Validates if a string is a valid hex color code.
+
+```typescript
+import { isValidHexColor } from 'qrcode-studio';
+
+console.log(isValidHexColor('#FF5733')); // true
+console.log(isValidHexColor('#F57')); // true (short form)
+console.log(isValidHexColor('red')); // false
+```
+
+#### isValidQRSize(size: number): boolean
+
+Validates if a number is a valid QR code size (50-1000 pixels).
+
+```typescript
+import { isValidQRSize } from 'qrcode-studio';
+
+console.log(isValidQRSize(300)); // true
+console.log(isValidQRSize(25)); // false (too small)
+console.log(isValidQRSize(2000)); // false (too large)
+```
+
+### QR Data Validation
+
+#### validateQRData(type: QRType, data: QRData): void
+
+Validates QR data based on the specified type. Throws `QRValidationError` if validation fails.
+
+```typescript
+import { validateQRData, QRType, QRValidationError } from 'qrcode-studio';
+
+try {
+  validateQRData(QRType.WEBSITE, { url: 'https://example.com' });
+  // Validation passed
+} catch (error) {
+  if (error instanceof QRValidationError) {
+    console.error('Validation failed:', error.message);
+    console.error('Field:', error.field);
+  }
+}
+```
+
+### Form Utilities
+
+#### qrFormFields
+
+Provides form field configurations for each QR type.
+
+```typescript
+import { qrFormFields, QRType } from 'qrcode-studio';
+
+const websiteFields = qrFormFields[QRType.WEBSITE];
+console.log(websiteFields);
+// Returns array of field configurations for website QR type
+```
+
+#### qrTypeInfo
+
+Provides metadata about each QR type.
+
+```typescript
+import { qrTypeInfo, QRType } from 'qrcode-studio';
+
+const websiteInfo = qrTypeInfo[QRType.WEBSITE];
+console.log(websiteInfo);
+// Returns: { label: 'Website', icon: '🌐', description: 'Link to any website' }
+```

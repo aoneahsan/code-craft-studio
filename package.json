@@ -1,6 +1,6 @@
 {
   "name": "qrcode-studio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A comprehensive Capacitor plugin for QR code scanning and generation with 17+ data types, customizable designs, landing pages, and analytics. Build feature-rich QR code experiences for web, iOS, and Android.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",

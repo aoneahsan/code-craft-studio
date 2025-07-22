@@ -382,7 +382,10 @@
       "Bash(npm outdated)",
       "Bash(yarn pack:*)",
       "Bash(npm pack:*)",
-      "Bash(npm outdated:*)"
+      "Bash(npm outdated:*)",
+      "Bash(yarn install:*)",
+      "Bash(yarn tsup)",
+      "Bash(yarn:*)"
     ],
     "deny": []
   }

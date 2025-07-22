@@ -1,15 +1,5 @@
 # QRCode Studio
 
-<div align="center">
-  <img src="assets/icon-only.jpeg" alt="QRCode Studio Logo" width="120" />
-  
-  <h3>A comprehensive Capacitor plugin for QR code scanning and generation</h3>
-  
-  [![npm version](https://img.shields.io/npm/v/qrcode-studio.svg)](https://www.npmjs.com/package/qrcode-studio)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Platform Support](https://img.shields.io/badge/platforms-Web%20%7C%20iOS%20%7C%20Android-blue.svg)](https://capacitorjs.com/)
-</div>
-
 ## 📚 Documentation
 
 | Resource | Description |
@@ -21,6 +11,16 @@
 | 🎮 [Interactive Playground](./app-project-documentation/api-playground/) | Try the API in your browser |
 | 📱 [Platform Setup](./app-project-documentation/platform-setup/) | iOS and Android configuration |
 | 🎥 [Video Tutorials](./app-project-documentation/tutorials/video-tutorials.md) | Step-by-step video guides |
+
+<div align="center">
+  <img src="assets/icon-only.jpeg" alt="QRCode Studio Logo" width="120" />
+  
+  <h3>A comprehensive Capacitor plugin for QR code scanning and generation</h3>
+  
+  [![npm version](https://img.shields.io/npm/v/qrcode-studio.svg)](https://www.npmjs.com/package/qrcode-studio)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Platform Support](https://img.shields.io/badge/platforms-Web%20%7C%20iOS%20%7C%20Android-blue.svg)](https://capacitorjs.com/)
+</div>
 
 ## 🚀 Features
 
