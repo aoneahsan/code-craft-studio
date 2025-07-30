@@ -5,6 +5,7 @@
 @import '../components/QRGenerator/QRGenerator.css';
 @import '../components/QRStudio/QRStudio.css';
 @import '../components/shared/ArrayFieldEditor.css';
+@import '../components/BarcodeScanner.css';
 
 /* Global styles */
 .qrcode-studio-wrapper {

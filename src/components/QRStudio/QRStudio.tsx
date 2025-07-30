@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { QRScanner } from '../QRScanner';
 import { QRGenerator } from '../QRGenerator';
+import { BarcodeScanner } from '../BarcodeScanner';
 import { QRCodeStudio } from '../../index';
 import type { 
   QRStudioProps, 
@@ -9,6 +10,8 @@ import type {
   ScanResult,
   QRDesignOptions,
   HistoryItem,
+  BarcodeFormat,
+  BarcodeResult,
 } from '../../definitions';
 import { QRType } from '../../definitions';
 import { qrFormFields, qrTypeInfo } from '../../utils/qr-forms';
@@ -36,9 +39,12 @@ export const QRStudio: React.FC<QRStudioProps> = ({
   style,
 }) => {
   const [activeTab, setActiveTab] = useState<'scan' | 'generate' | 'history'>('generate');
+  const [mode, setMode] = useState<'qr' | 'barcode'>('qr');
   const [selectedType, setSelectedType] = useState<QRType>(config.defaultType || QRType.WEBSITE);
+  const [selectedBarcodeFormat, setSelectedBarcodeFormat] = useState<BarcodeFormat>('CODE_128' as BarcodeFormat);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [, setGeneratedQR] = useState<QRCodeResult | null>(null);
+  const [generatedBarcode, setGeneratedBarcode] = useState<BarcodeResult | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showCustomization, setShowCustomization] = useState(false);
   const [design, setDesign] = useState<QRDesignOptions>(config.defaultDesign || {});
@@ -92,6 +98,21 @@ export const QRStudio: React.FC<QRStudioProps> = ({
       loadHistory();
     }
   }, [onSave, features.history]);
+
+  const handleGenerateBarcode = useCallback(async () => {
+    try {
+      const result = await QRCodeStudio.generateBarcode({
+        format: selectedBarcodeFormat,
+        data: formData.barcodeData || '',
+        width: 300,
+        height: 100,
+        displayText: true,
+      });
+      setGeneratedBarcode(result);
+    } catch (error) {
+      console.error('Failed to generate barcode:', error);
+    }
+  }, [selectedBarcodeFormat, formData.barcodeData]);
 
   const handleTypeChange = (type: QRType) => {
     setSelectedType(type);
@@ -398,50 +419,187 @@ export const QRStudio: React.FC<QRStudioProps> = ({
       <div className="qr-studio-content">
         {activeTab === 'scan' && features.scanner && (
           <div className="scan-tab">
-            <QRScanner onScan={handleScanResult} />
+            <div className="scan-mode-selector">
+              <button
+                className={`mode-btn ${mode === 'qr' ? 'active' : ''}`}
+                onClick={() => setMode('qr')}
+              >
+                QR Code
+              </button>
+              <button
+                className={`mode-btn ${mode === 'barcode' ? 'active' : ''}`}
+                onClick={() => setMode('barcode')}
+              >
+                Barcode
+              </button>
+            </div>
+            {mode === 'qr' ? (
+              <QRScanner onScan={handleScanResult} />
+            ) : (
+              <BarcodeScanner 
+                onScan={handleScanResult}
+                showFormatSelector={true}
+                showProductInfo={true}
+              />
+            )}
           </div>
         )}
 
         {activeTab === 'generate' && features.generator && (
           <div className="generate-tab">
-            <div className="generate-sidebar">
-              <h2>Select QR Code Type</h2>
-              {renderTypeSelector()}
+            <div className="generate-mode-selector">
+              <button
+                className={`mode-btn ${mode === 'qr' ? 'active' : ''}`}
+                onClick={() => setMode('qr')}
+              >
+                QR Code
+              </button>
+              <button
+                className={`mode-btn ${mode === 'barcode' ? 'active' : ''}`}
+                onClick={() => setMode('barcode')}
+              >
+                Barcode
+              </button>
             </div>
 
-            <div className="generate-main">
-              <div className="form-section">
-                <h2>Enter Information</h2>
-                {renderForm()}
-                
-                <button
-                  className="customize-toggle"
-                  onClick={() => setShowCustomization(!showCustomization)}
-                >
-                  {showCustomization ? 'Hide' : 'Show'} Customization
-                </button>
-                
-                {showCustomization && renderCustomization()}
-              </div>
+            {mode === 'qr' ? (
+              <>
+                <div className="generate-sidebar">
+                  <h2>Select QR Code Type</h2>
+                  {renderTypeSelector()}
+                </div>
 
-              <div className="preview-section">
-                <h2>Preview</h2>
-                {Object.keys(formData).length > 0 && (
-                  <QRGenerator
-                    type={selectedType}
-                    data={getQRData()}
-                    design={design}
-                    size={300}
-                    onGenerate={(result) => {
-                      handleGenerate(result);
-                      setGeneratedQR(result);
-                    }}
-                    showDownload={features.export}
-                    showShare={features.sharing}
-                  />
-                )}
+                <div className="generate-main">
+                  <div className="form-section">
+                    <h2>Enter Information</h2>
+                    {renderForm()}
+                    
+                    <button
+                      className="customize-toggle"
+                      onClick={() => setShowCustomization(!showCustomization)}
+                    >
+                      {showCustomization ? 'Hide' : 'Show'} Customization
+                    </button>
+                    
+                    {showCustomization && renderCustomization()}
+                  </div>
+
+                  <div className="preview-section">
+                    <h2>Preview</h2>
+                    {Object.keys(formData).length > 0 && (
+                      <QRGenerator
+                        type={selectedType}
+                        data={getQRData()}
+                        design={design}
+                        size={300}
+                        onGenerate={(result) => {
+                          handleGenerate(result);
+                          setGeneratedQR(result);
+                        }}
+                        showDownload={features.export}
+                        showShare={features.sharing}
+                      />
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="barcode-generate-main">
+                <div className="barcode-form-section">
+                  <h2>Barcode Configuration</h2>
+                  <div className="barcode-format-selector">
+                    <label>Barcode Format</label>
+                    <select
+                      value={selectedBarcodeFormat}
+                      onChange={(e) => setSelectedBarcodeFormat(e.target.value as BarcodeFormat)}
+                    >
+                      <optgroup label="Product Codes">
+                        <option value="EAN_13">EAN-13</option>
+                        <option value="EAN_8">EAN-8</option>
+                        <option value="UPC_A">UPC-A</option>
+                        <option value="UPC_E">UPC-E</option>
+                      </optgroup>
+                      <optgroup label="Industrial Codes">
+                        <option value="CODE_128">Code 128</option>
+                        <option value="CODE_39">Code 39</option>
+                        <option value="CODE_93">Code 93</option>
+                        <option value="CODABAR">Codabar</option>
+                        <option value="ITF">ITF</option>
+                        <option value="ITF_14">ITF-14</option>
+                      </optgroup>
+                      <optgroup label="Specialty">
+                        <option value="MSI">MSI</option>
+                        <option value="PHARMACODE">Pharmacode</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  
+                  <div className="barcode-data-input">
+                    <label>Barcode Data</label>
+                    <input
+                      type="text"
+                      value={formData.barcodeData || ''}
+                      onChange={(e) => setFormData({ ...formData, barcodeData: e.target.value })}
+                      placeholder="Enter barcode data"
+                    />
+                  </div>
+                  
+                  <button
+                    className="generate-barcode-btn"
+                    onClick={handleGenerateBarcode}
+                    disabled={!formData.barcodeData}
+                  >
+                    Generate Barcode
+                  </button>
+                </div>
+
+                <div className="barcode-preview-section">
+                  <h2>Preview</h2>
+                  {generatedBarcode && (
+                    <div className="barcode-result">
+                      {generatedBarcode.svg && (
+                        <div 
+                          className="barcode-svg"
+                          dangerouslySetInnerHTML={{ __html: generatedBarcode.svg }}
+                        />
+                      )}
+                      {generatedBarcode.dataUrl && !generatedBarcode.svg && (
+                        <img src={generatedBarcode.dataUrl} alt="Generated Barcode" />
+                      )}
+                      <div className="barcode-info">
+                        <p>Format: {generatedBarcode.format}</p>
+                        <p>Data: {generatedBarcode.data}</p>
+                      </div>
+                      {features.export && (
+                        <div className="barcode-actions">
+                          <button onClick={() => {
+                            const link = document.createElement('a');
+                            link.download = `barcode-${generatedBarcode.format}.png`;
+                            link.href = generatedBarcode.dataUrl || '';
+                            link.click();
+                          }}>
+                            Download PNG
+                          </button>
+                          {generatedBarcode.svg && (
+                            <button onClick={() => {
+                              const blob = new Blob([generatedBarcode.svg!], { type: 'image/svg+xml' });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.download = `barcode-${generatedBarcode.format}.svg`;
+                              link.href = url;
+                              link.click();
+                              URL.revokeObjectURL(url);
+                            }}>
+                              Download SVG
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

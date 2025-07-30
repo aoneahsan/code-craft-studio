@@ -1,6 +1,8 @@
 import { WebPlugin } from '@capacitor/core';
 import QRCode from 'qrcode';
 import QrScanner from 'qr-scanner';
+import { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat as ZXingFormat } from '@zxing/library';
+import JsBarcode from 'jsbarcode';
 
 import type {
   QRCodeStudioPlugin,
@@ -17,16 +19,24 @@ import type {
   ScanResult,
   ScanError,
   HistoryItem,
+  ImageScanOptions,
+  BarcodeGenerateOptions,
+  BarcodeResult,
 } from './definitions';
 
 import { QRType, BarcodeFormat } from './definitions';
 
 export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
   private scanner: QrScanner | null = null;
+  private barcodeReader: BrowserMultiFormatReader | null = null;
   private videoElement: HTMLVideoElement | null = null;
   private scanListeners: ((data: ScanResult) => void)[] = [];
   private errorListeners: ((error: ScanError) => void)[] = [];
+  private torchListeners: ((state: { isEnabled: boolean }) => void)[] = [];
   private history: HistoryItem[] = [];
+  private currentStream: MediaStream | null = null;
+  private torchEnabled: boolean = false;
+  private scanInterval: NodeJS.Timeout | null = null;
 
   async checkPermissions(): Promise<PermissionStatus> {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -78,32 +88,99 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
         document.body.appendChild(this.videoElement);
       }
 
-      // Initialize scanner with all available options
-      this.scanner = new QrScanner(
-        this.videoElement,
-        (result: QrScanner.ScanResult) => {
-          const scanResult: ScanResult = {
-            content: result.data,
-            format: BarcodeFormat.QR_CODE,
-            timestamp: Date.now(),
-            type: this.detectQRType(result.data),
-            parsedData: this.parseQRData(result.data),
-          };
+      // Determine which formats to scan
+      const requestedFormats = options?.targetedFormats || options?.formats || Object.values(BarcodeFormat);
+      const hasOnlyQR = requestedFormats.length === 1 && requestedFormats[0] === BarcodeFormat.QR_CODE;
+      
+      if (hasOnlyQR) {
+        // Use QrScanner for QR-only scanning (better performance)
+        this.scanner = new QrScanner(
+          this.videoElement,
+          (result: QrScanner.ScanResult) => {
+            const scanResult: ScanResult = {
+              content: result.data,
+              format: BarcodeFormat.QR_CODE,
+              timestamp: Date.now(),
+              type: this.detectQRType(result.data),
+              parsedData: this.parseQRData(result.data),
+              cornerPoints: result.cornerPoints as any,
+            };
 
-          this.scanListeners.forEach(listener => listener(scanResult));
-        },
-        {
-          preferredCamera: options?.camera || 'environment',
-          maxScansPerSecond: options?.maxScansPerSecond !== undefined ? options.maxScansPerSecond : 
-                            (options?.scanDelay ? 1000 / options.scanDelay : 5),
-          calculateScanRegion: options?.calculateScanRegion,
-          overlay: options?.overlay,
-          highlightCodeOutline: options?.highlightCodeOutline !== false,
-          highlightScanRegion: options?.highlightScanRegion !== false,
+            this.scanListeners.forEach(listener => listener(scanResult));
+          },
+          {
+            preferredCamera: options?.camera || 'environment',
+            maxScansPerSecond: options?.maxScansPerSecond !== undefined ? options.maxScansPerSecond : 
+                              (options?.scanDelay ? 1000 / options.scanDelay : 5),
+            calculateScanRegion: options?.calculateScanRegion,
+            overlay: options?.overlay,
+            highlightCodeOutline: options?.highlightCodeOutline !== false,
+            highlightScanRegion: options?.highlightScanRegion !== false,
+          }
+        );
+
+        await this.scanner.start();
+        
+        // Enable torch if requested
+        if (options?.torch && this.scanner.hasFlash()) {
+          await this.scanner.turnFlashOn();
+          this.torchEnabled = true;
         }
-      );
-
-      await this.scanner.start();
+      } else {
+        // Use ZXing for multi-format scanning
+        this.barcodeReader = new BrowserMultiFormatReader();
+        
+        // Configure hints for better performance
+        const hints = new Map();
+        if (options?.targetedFormats || options?.formats) {
+          const zxingFormats = this.mapToZXingFormats(requestedFormats);
+          hints.set(DecodeHintType.POSSIBLE_FORMATS, zxingFormats);
+        }
+        
+        this.barcodeReader.hints = hints;
+        
+        // Start video stream
+        const constraints: MediaStreamConstraints = {
+          video: {
+            facingMode: options?.camera === 'front' ? 'user' : 'environment',
+          }
+        };
+        
+        this.currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        this.videoElement.srcObject = this.currentStream;
+        await this.videoElement.play();
+        
+        // Enable torch if requested
+        if (options?.torch) {
+          await this.enableTorch();
+        }
+        
+        // Start continuous scanning
+        const scanDelay = options?.scanDelay || (1000 / (options?.maxScansPerSecond || 5));
+        this.scanInterval = setInterval(async () => {
+          try {
+            const result = await this.barcodeReader.decodeFromVideoElement(this.videoElement!);
+            if (result) {
+              const scanResult: ScanResult = {
+                content: result.getText(),
+                format: this.mapFromZXingFormat(result.getBarcodeFormat()),
+                timestamp: Date.now(),
+                type: this.detectQRType(result.getText()),
+                parsedData: this.parseQRData(result.getText()),
+                productInfo: await this.getProductInfo(result.getText(), this.mapFromZXingFormat(result.getBarcodeFormat())),
+              };
+              
+              if (!options?.multiple) {
+                clearInterval(this.scanInterval!);
+              }
+              
+              this.scanListeners.forEach(listener => listener(scanResult));
+            }
+          } catch (err) {
+            // Ignore decode errors (no barcode found)
+          }
+        }, scanDelay);
+      }
     } catch (error) {
       const scanError: ScanError = {
         code: 'SCAN_ERROR',
@@ -121,10 +198,27 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       this.scanner = null;
     }
 
+    if (this.barcodeReader) {
+      this.barcodeReader.reset();
+      this.barcodeReader = null;
+    }
+
+    if (this.scanInterval) {
+      clearInterval(this.scanInterval);
+      this.scanInterval = null;
+    }
+
+    if (this.currentStream) {
+      this.currentStream.getTracks().forEach(track => track.stop());
+      this.currentStream = null;
+    }
+
     if (this.videoElement) {
       this.videoElement.remove();
       this.videoElement = null;
     }
+
+    this.torchEnabled = false;
   }
 
   async generate(options: GenerateOptions): Promise<QRCodeResult> {
@@ -361,6 +455,246 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
     };
   }
 
+  async scan(options?: ScanOptions): Promise<ScanResult> {
+    return new Promise((resolve, reject) => {
+      const handleScan = (result: ScanResult) => {
+        this.stopScan();
+        resolve(result);
+      };
+
+      const handleError = (error: ScanError) => {
+        this.stopScan();
+        reject(new Error(error.message));
+      };
+
+      this.addListener('scanResult', handleScan);
+      this.addListener('scanError', handleError);
+
+      this.startScan(options).catch(reject);
+    });
+  }
+
+  async readBarcodesFromImage(options: ImageScanOptions): Promise<ScanResult[]> {
+    try {
+      const reader = new BrowserMultiFormatReader();
+      
+      // Configure formats if specified
+      if (options.formats) {
+        const hints = new Map();
+        hints.set(DecodeHintType.POSSIBLE_FORMATS, this.mapToZXingFormats(options.formats));
+        reader.hints = hints;
+      }
+
+      let imageElement: HTMLImageElement;
+      
+      if (options.path) {
+        // Load from path
+        imageElement = new Image();
+        await new Promise((resolve, reject) => {
+          imageElement.onload = resolve;
+          imageElement.onerror = reject;
+          imageElement.src = options.path!;
+        });
+      } else if (options.base64) {
+        // Load from base64
+        imageElement = new Image();
+        await new Promise((resolve, reject) => {
+          imageElement.onload = resolve;
+          imageElement.onerror = reject;
+          imageElement.src = `data:image/png;base64,${options.base64}`;
+        });
+      } else {
+        throw new Error('Either path or base64 must be provided');
+      }
+
+      const result = await reader.decodeFromImageElement(imageElement);
+      
+      return [{
+        content: result.getText(),
+        format: this.mapFromZXingFormat(result.getBarcodeFormat()),
+        timestamp: Date.now(),
+        type: this.detectQRType(result.getText()),
+        parsedData: this.parseQRData(result.getText()),
+        productInfo: await this.getProductInfo(result.getText(), this.mapFromZXingFormat(result.getBarcodeFormat())),
+      }];
+    } catch (error) {
+      throw new Error(`Failed to read barcode from image: ${error}`);
+    }
+  }
+
+  async getSupportedFormats(): Promise<BarcodeFormat[]> {
+    // Web platform supports all formats through ZXing
+    return Object.values(BarcodeFormat);
+  }
+
+  async enableTorch(): Promise<void> {
+    try {
+      if (this.scanner && this.scanner.hasFlash()) {
+        await this.scanner.turnFlashOn();
+        this.torchEnabled = true;
+        this.torchListeners.forEach(listener => listener({ isEnabled: true }));
+      } else if (this.currentStream) {
+        const videoTrack = this.currentStream.getVideoTracks()[0];
+        const capabilities = videoTrack.getCapabilities() as any;
+        
+        if (capabilities.torch) {
+          await videoTrack.applyConstraints({
+            advanced: [{ torch: true }],
+          } as any);
+          this.torchEnabled = true;
+          this.torchListeners.forEach(listener => listener({ isEnabled: true }));
+        } else {
+          throw new Error('Torch not available on this device');
+        }
+      }
+    } catch (error) {
+      throw new Error(`Failed to enable torch: ${error}`);
+    }
+  }
+
+  async disableTorch(): Promise<void> {
+    try {
+      if (this.scanner && this.scanner.hasFlash()) {
+        await this.scanner.turnFlashOff();
+        this.torchEnabled = false;
+        this.torchListeners.forEach(listener => listener({ isEnabled: false }));
+      } else if (this.currentStream) {
+        const videoTrack = this.currentStream.getVideoTracks()[0];
+        const capabilities = videoTrack.getCapabilities() as any;
+        
+        if (capabilities.torch) {
+          await videoTrack.applyConstraints({
+            advanced: [{ torch: false }],
+          } as any);
+          this.torchEnabled = false;
+          this.torchListeners.forEach(listener => listener({ isEnabled: false }));
+        }
+      }
+    } catch (error) {
+      throw new Error(`Failed to disable torch: ${error}`);
+    }
+  }
+
+  async isTorchAvailable(): Promise<{ available: boolean }> {
+    try {
+      if (this.scanner) {
+        return { available: this.scanner.hasFlash() };
+      }
+      
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const videoTrack = stream.getVideoTracks()[0];
+      const capabilities = videoTrack.getCapabilities() as any;
+      stream.getTracks().forEach(track => track.stop());
+      
+      return { available: !!capabilities.torch };
+    } catch {
+      return { available: false };
+    }
+  }
+
+  async setZoomRatio(options: { ratio: number }): Promise<void> {
+    try {
+      if (this.currentStream) {
+        const videoTrack = this.currentStream.getVideoTracks()[0];
+        const capabilities = videoTrack.getCapabilities() as any;
+        
+        if (capabilities.zoom) {
+          const minZoom = capabilities.zoom.min || 1;
+          const maxZoom = capabilities.zoom.max || 1;
+          const zoom = Math.min(maxZoom, Math.max(minZoom, options.ratio));
+          
+          await videoTrack.applyConstraints({
+            advanced: [{ zoom }],
+          } as any);
+        } else {
+          throw new Error('Zoom not available on this device');
+        }
+      } else {
+        throw new Error('No active video stream');
+      }
+    } catch (error) {
+      throw new Error(`Failed to set zoom: ${error}`);
+    }
+  }
+
+  async generateBarcode(options: BarcodeGenerateOptions): Promise<BarcodeResult> {
+    try {
+      // Create canvas element
+      const canvas = document.createElement('canvas');
+      
+      // Generate barcode
+      JsBarcode(canvas, options.data, {
+        format: this.mapToJSBarcodeFormat(options.format),
+        width: options.width ? options.width / 100 : 2,
+        height: options.height || 100,
+        displayValue: options.displayText !== false,
+        text: options.text || options.data,
+        textAlign: options.fontOptions?.textAlign || 'center',
+        textPosition: options.fontOptions?.textPosition || 'bottom',
+        textMargin: options.fontOptions?.textMargin || 2,
+        fontSize: options.fontOptions?.size || 20,
+        font: options.fontOptions?.font || 'monospace',
+        background: options.colors?.background || '#FFFFFF',
+        lineColor: options.colors?.lineColor || '#000000',
+        margin: options.margins ? Math.min(
+          options.margins.top || 10,
+          options.margins.right || 10,
+          options.margins.bottom || 10,
+          options.margins.left || 10
+        ) : 10,
+      });
+
+      // Convert to requested format
+      let result: BarcodeResult = {
+        format: options.format,
+        data: options.data,
+      };
+
+      switch (options.outputFormat) {
+        case 'svg':
+          // For SVG, we need to regenerate using SVG element
+          const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          JsBarcode(svgElement, options.data, {
+            format: this.mapToJSBarcodeFormat(options.format),
+            width: options.width ? options.width / 100 : 2,
+            height: options.height || 100,
+            displayValue: options.displayText !== false,
+            text: options.text || options.data,
+            textAlign: options.fontOptions?.textAlign || 'center',
+            textPosition: options.fontOptions?.textPosition || 'bottom',
+            textMargin: options.fontOptions?.textMargin || 2,
+            fontSize: options.fontOptions?.size || 20,
+            font: options.fontOptions?.font || 'monospace',
+            background: options.colors?.background || '#FFFFFF',
+            lineColor: options.colors?.lineColor || '#000000',
+            margin: options.margins ? Math.min(
+              options.margins.top || 10,
+              options.margins.right || 10,
+              options.margins.bottom || 10,
+              options.margins.left || 10
+            ) : 10,
+          });
+          result.svg = new XMLSerializer().serializeToString(svgElement);
+          break;
+
+        case 'jpg':
+          result.dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+          result.base64 = result.dataUrl.split(',')[1];
+          break;
+
+        case 'png':
+        default:
+          result.dataUrl = canvas.toDataURL('image/png');
+          result.base64 = result.dataUrl.split(',')[1];
+          break;
+      }
+
+      return result;
+    } catch (error) {
+      throw new Error(`Failed to generate barcode: ${error}`);
+    }
+  }
+
   async addListener(
     eventName: string,
     listenerFunc: any,
@@ -369,6 +703,8 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       this.scanListeners.push(listenerFunc);
     } else if (eventName === 'scanError') {
       this.errorListeners.push(listenerFunc);
+    } else if (eventName === 'torchStateChanged') {
+      this.torchListeners.push(listenerFunc);
     }
 
     return {
@@ -377,6 +713,8 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
           this.scanListeners = this.scanListeners.filter(l => l !== listenerFunc);
         } else if (eventName === 'scanError') {
           this.errorListeners = this.errorListeners.filter(l => l !== listenerFunc);
+        } else if (eventName === 'torchStateChanged') {
+          this.torchListeners = this.torchListeners.filter(l => l !== listenerFunc);
         }
       },
     };
@@ -385,6 +723,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
   async removeAllListeners(): Promise<void> {
     this.scanListeners = [];
     this.errorListeners = [];
+    this.torchListeners = [];
   }
 
   // Helper methods
@@ -728,5 +1067,90 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
     }
     
     return distribution;
+  }
+
+  private mapToZXingFormats(formats: BarcodeFormat[]): ZXingFormat[] {
+    return formats.map(format => {
+      switch (format) {
+        case BarcodeFormat.QR_CODE: return ZXingFormat.QR_CODE;
+        case BarcodeFormat.DATA_MATRIX: return ZXingFormat.DATA_MATRIX;
+        case BarcodeFormat.AZTEC: return ZXingFormat.AZTEC;
+        case BarcodeFormat.PDF_417: return ZXingFormat.PDF_417;
+        case BarcodeFormat.MAXICODE: return ZXingFormat.MAXICODE;
+        case BarcodeFormat.EAN_13: return ZXingFormat.EAN_13;
+        case BarcodeFormat.EAN_8: return ZXingFormat.EAN_8;
+        case BarcodeFormat.UPC_A: return ZXingFormat.UPC_A;
+        case BarcodeFormat.UPC_E: return ZXingFormat.UPC_E;
+        case BarcodeFormat.CODE_128: return ZXingFormat.CODE_128;
+        case BarcodeFormat.CODE_39: return ZXingFormat.CODE_39;
+        case BarcodeFormat.CODE_93: return ZXingFormat.CODE_93;
+        case BarcodeFormat.CODABAR: return ZXingFormat.CODABAR;
+        case BarcodeFormat.ITF: return ZXingFormat.ITF;
+        case BarcodeFormat.RSS_14: return ZXingFormat.RSS_14;
+        case BarcodeFormat.RSS_EXPANDED: return ZXingFormat.RSS_EXPANDED;
+        default: return ZXingFormat.QR_CODE;
+      }
+    });
+  }
+
+  private mapFromZXingFormat(format: ZXingFormat): BarcodeFormat {
+    switch (format) {
+      case ZXingFormat.QR_CODE: return BarcodeFormat.QR_CODE;
+      case ZXingFormat.DATA_MATRIX: return BarcodeFormat.DATA_MATRIX;
+      case ZXingFormat.AZTEC: return BarcodeFormat.AZTEC;
+      case ZXingFormat.PDF_417: return BarcodeFormat.PDF_417;
+      case ZXingFormat.MAXICODE: return BarcodeFormat.MAXICODE;
+      case ZXingFormat.EAN_13: return BarcodeFormat.EAN_13;
+      case ZXingFormat.EAN_8: return BarcodeFormat.EAN_8;
+      case ZXingFormat.UPC_A: return BarcodeFormat.UPC_A;
+      case ZXingFormat.UPC_E: return BarcodeFormat.UPC_E;
+      case ZXingFormat.CODE_128: return BarcodeFormat.CODE_128;
+      case ZXingFormat.CODE_39: return BarcodeFormat.CODE_39;
+      case ZXingFormat.CODE_93: return BarcodeFormat.CODE_93;
+      case ZXingFormat.CODABAR: return BarcodeFormat.CODABAR;
+      case ZXingFormat.ITF: return BarcodeFormat.ITF;
+      case ZXingFormat.RSS_14: return BarcodeFormat.RSS_14;
+      case ZXingFormat.RSS_EXPANDED: return BarcodeFormat.RSS_EXPANDED;
+      default: return BarcodeFormat.QR_CODE;
+    }
+  }
+
+  private mapToJSBarcodeFormat(format: BarcodeFormat): string {
+    switch (format) {
+      case BarcodeFormat.CODE_128: return 'CODE128';
+      case BarcodeFormat.CODE_39: return 'CODE39';
+      case BarcodeFormat.EAN_13: return 'EAN13';
+      case BarcodeFormat.EAN_8: return 'EAN8';
+      case BarcodeFormat.UPC_A: return 'UPC';
+      case BarcodeFormat.UPC_E: return 'UPC_E';
+      case BarcodeFormat.ITF: return 'ITF';
+      case BarcodeFormat.ITF_14: return 'ITF14';
+      case BarcodeFormat.MSI: return 'MSI';
+      case BarcodeFormat.MSI_PLESSEY: return 'MSI';
+      case BarcodeFormat.PHARMACODE: return 'pharmacode';
+      case BarcodeFormat.CODABAR: return 'codabar';
+      default:
+        throw new Error(`Unsupported barcode format for generation: ${format}`);
+    }
+  }
+
+  private async getProductInfo(content: string, format: BarcodeFormat): Promise<any> {
+    // Only process product codes
+    if (![BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.EAN_13, BarcodeFormat.EAN_8].includes(format)) {
+      return undefined;
+    }
+
+    // In a real implementation, this would call a product API service
+    // For now, return mock data for demonstration
+    return {
+      name: 'Sample Product',
+      brand: 'Sample Brand',
+      category: 'General',
+      description: 'This is a sample product description',
+      metadata: {
+        barcode: content,
+        format: format,
+      }
+    };
   }
 }

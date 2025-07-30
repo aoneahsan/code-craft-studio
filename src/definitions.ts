@@ -25,9 +25,49 @@ export interface QRCodeStudioPlugin {
   stopScan(): Promise<void>;
   
   /**
+   * Open a ready-to-use scanning UI (alternative to startScan)
+   */
+  scan(options?: ScanOptions): Promise<ScanResult>;
+  
+  /**
+   * Read barcodes from an image file
+   */
+  readBarcodesFromImage(options: ImageScanOptions): Promise<ScanResult[]>;
+  
+  /**
+   * Get supported barcode formats on current platform
+   */
+  getSupportedFormats(): Promise<BarcodeFormat[]>;
+  
+  /**
+   * Enable torch/flashlight
+   */
+  enableTorch(): Promise<void>;
+  
+  /**
+   * Disable torch/flashlight
+   */
+  disableTorch(): Promise<void>;
+  
+  /**
+   * Check if torch is available
+   */
+  isTorchAvailable(): Promise<{ available: boolean }>;
+  
+  /**
+   * Set zoom ratio for camera
+   */
+  setZoomRatio(options: { ratio: number }): Promise<void>;
+  
+  /**
    * Generate a QR code
    */
   generate(options: GenerateOptions): Promise<QRCodeResult>;
+  
+  /**
+   * Generate a barcode (1D codes)
+   */
+  generateBarcode(options: BarcodeGenerateOptions): Promise<BarcodeResult>;
   
   /**
    * Save QR code to device storage
@@ -63,6 +103,14 @@ export interface QRCodeStudioPlugin {
   addListener(
     eventName: 'scanError',
     listenerFunc: (error: ScanError) => void,
+  ): Promise<PluginListenerHandle>;
+  
+  /**
+   * Add a listener for torch state changes
+   */
+  addListener(
+    eventName: 'torchStateChanged',
+    listenerFunc: (state: { isEnabled: boolean }) => void,
   ): Promise<PluginListenerHandle>;
   
   /**
@@ -110,6 +158,26 @@ export interface ScanOptions {
   formats?: BarcodeFormat[];
   
   /**
+   * Targeted formats for optimized scanning performance
+   */
+  targetedFormats?: BarcodeFormat[];
+  
+  /**
+   * Enable multiple barcode scanning
+   */
+  multiple?: boolean;
+  
+  /**
+   * Detection area for scanning specific region
+   */
+  detectionArea?: DetectionArea;
+  
+  /**
+   * Enable torch at start
+   */
+  torch?: boolean;
+  
+  /**
    * Video element styling options for web platform
    */
   videoStyle?: {
@@ -152,22 +220,81 @@ export interface ScanOptions {
 }
 
 /**
+ * Image scan options
+ */
+export interface ImageScanOptions {
+  /**
+   * Image path or data URL
+   */
+  path?: string;
+  
+  /**
+   * Base64 encoded image data
+   */
+  base64?: string;
+  
+  /**
+   * Formats to detect
+   */
+  formats?: BarcodeFormat[];
+}
+
+/**
+ * Detection area for focused scanning
+ */
+export interface DetectionArea {
+  /**
+   * X coordinate (0-1)
+   */
+  x: number;
+  
+  /**
+   * Y coordinate (0-1)
+   */
+  y: number;
+  
+  /**
+   * Width (0-1)
+   */
+  width: number;
+  
+  /**
+   * Height (0-1)
+   */
+  height: number;
+}
+
+/**
  * Barcode formats
  */
 export enum BarcodeFormat {
+  // 2D Codes
   QR_CODE = 'QR_CODE',
   DATA_MATRIX = 'DATA_MATRIX',
   AZTEC = 'AZTEC',
   PDF_417 = 'PDF_417',
+  MAXICODE = 'MAXICODE',
+  
+  // 1D Product Codes
+  EAN_13 = 'EAN_13',
+  EAN_8 = 'EAN_8',
+  UPC_A = 'UPC_A',
+  UPC_E = 'UPC_E',
+  
+  // 1D Industrial Codes
   CODE_128 = 'CODE_128',
   CODE_39 = 'CODE_39',
   CODE_93 = 'CODE_93',
   CODABAR = 'CODABAR',
-  EAN_13 = 'EAN_13',
-  EAN_8 = 'EAN_8',
   ITF = 'ITF',
-  UPC_A = 'UPC_A',
-  UPC_E = 'UPC_E',
+  ITF_14 = 'ITF_14',
+  
+  // Specialty Codes
+  MSI = 'MSI',
+  MSI_PLESSEY = 'MSI_PLESSEY',
+  PHARMACODE = 'PHARMACODE',
+  RSS_14 = 'RSS_14',
+  RSS_EXPANDED = 'RSS_EXPANDED',
 }
 
 /**
@@ -193,6 +320,26 @@ export interface ScanResult {
    * Parsed data based on type
    */
   parsedData?: QRData;
+  
+  /**
+   * Product info for UPC/EAN codes
+   */
+  productInfo?: ProductInfo;
+  
+  /**
+   * Corner points of detected code
+   */
+  cornerPoints?: Array<{ x: number; y: number }>;
+  
+  /**
+   * Bounding box of detected code
+   */
+  boundingBox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   
   /**
    * Timestamp of scan
@@ -1166,4 +1313,152 @@ export interface AnalyticsConfig {
   trackDownloads?: boolean;
   trackShares?: boolean;
   customEvents?: boolean;
+}
+
+/**
+ * Barcode generation options
+ */
+export interface BarcodeGenerateOptions {
+  /**
+   * Barcode format
+   */
+  format: BarcodeFormat;
+  
+  /**
+   * Data to encode
+   */
+  data: string;
+  
+  /**
+   * Width in pixels
+   */
+  width?: number;
+  
+  /**
+   * Height in pixels
+   */
+  height?: number;
+  
+  /**
+   * Display text below barcode
+   */
+  displayText?: boolean;
+  
+  /**
+   * Text to display (if different from data)
+   */
+  text?: string;
+  
+  /**
+   * Font options
+   */
+  fontOptions?: {
+    font?: string;
+    size?: number;
+    textAlign?: 'left' | 'center' | 'right';
+    textPosition?: 'top' | 'bottom';
+    textMargin?: number;
+  };
+  
+  /**
+   * Colors
+   */
+  colors?: {
+    background?: string;
+    lineColor?: string;
+    textColor?: string;
+  };
+  
+  /**
+   * Margins
+   */
+  margins?: {
+    top?: number;
+    right?: number;
+    bottom?: number;
+    left?: number;
+  };
+  
+  /**
+   * Output format
+   */
+  outputFormat?: 'png' | 'jpg' | 'svg';
+}
+
+/**
+ * Barcode result
+ */
+export interface BarcodeResult {
+  /**
+   * Base64 encoded image
+   */
+  base64?: string;
+  
+  /**
+   * SVG string
+   */
+  svg?: string;
+  
+  /**
+   * Data URL
+   */
+  dataUrl?: string;
+  
+  /**
+   * Barcode format
+   */
+  format: BarcodeFormat;
+  
+  /**
+   * Encoded data
+   */
+  data: string;
+}
+
+/**
+ * Barcode scan result with product info
+ */
+export interface ProductInfo {
+  /**
+   * Product name
+   */
+  name?: string;
+  
+  /**
+   * Brand
+   */
+  brand?: string;
+  
+  /**
+   * Category
+   */
+  category?: string;
+  
+  /**
+   * Description
+   */
+  description?: string;
+  
+  /**
+   * Image URL
+   */
+  imageUrl?: string;
+  
+  /**
+   * Price
+   */
+  price?: {
+    value: number;
+    currency: string;
+  };
+  
+  /**
+   * ISBN for books
+   */
+  isbn?: string;
+  
+  /**
+   * Custom metadata
+   */
+  metadata?: Record<string, any>;
 }

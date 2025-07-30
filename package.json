@@ -72,6 +72,8 @@
   },
   "dependencies": {
     "@capacitor/preferences": "^7.0.1",
+    "@zxing/library": "^0.21.3",
+    "jsbarcode": "^3.12.1",
     "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.4"
   },
