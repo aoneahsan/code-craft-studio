@@ -35,8 +35,8 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
   private torchListeners: ((state: { isEnabled: boolean }) => void)[] = [];
   private history: HistoryItem[] = [];
   private currentStream: MediaStream | null = null;
-  private torchEnabled: boolean = false;
-  private scanInterval: NodeJS.Timeout | null = null;
+  // private torchEnabled: boolean = false; // Not used in web implementation
+  private scanInterval: ReturnType<typeof setTimeout> | null = null;
 
   async checkPermissions(): Promise<PermissionStatus> {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -122,9 +122,9 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
         await this.scanner.start();
         
         // Enable torch if requested
-        if (options?.torch && this.scanner.hasFlash()) {
+        if (options?.torch && await this.scanner.hasFlash()) {
           await this.scanner.turnFlashOn();
-          this.torchEnabled = true;
+          // this.torchEnabled = true;
         }
       } else {
         // Use ZXing for multi-format scanning
@@ -159,7 +159,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
         const scanDelay = options?.scanDelay || (1000 / (options?.maxScansPerSecond || 5));
         this.scanInterval = setInterval(async () => {
           try {
-            const result = await this.barcodeReader.decodeFromVideoElement(this.videoElement!);
+            const result = await this.barcodeReader!.decodeFromVideoElement(this.videoElement!);
             if (result) {
               const scanResult: ScanResult = {
                 content: result.getText(),
@@ -176,7 +176,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
               
               this.scanListeners.forEach(listener => listener(scanResult));
             }
-          } catch (err) {
+          } catch {
             // Ignore decode errors (no barcode found)
           }
         }, scanDelay);
@@ -218,7 +218,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
       this.videoElement = null;
     }
 
-    this.torchEnabled = false;
+    // this.torchEnabled = false;
   }
 
   async generate(options: GenerateOptions): Promise<QRCodeResult> {
@@ -529,9 +529,9 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
 
   async enableTorch(): Promise<void> {
     try {
-      if (this.scanner && this.scanner.hasFlash()) {
+      if (this.scanner && await this.scanner.hasFlash()) {
         await this.scanner.turnFlashOn();
-        this.torchEnabled = true;
+        // this.torchEnabled = true;
         this.torchListeners.forEach(listener => listener({ isEnabled: true }));
       } else if (this.currentStream) {
         const videoTrack = this.currentStream.getVideoTracks()[0];
@@ -541,7 +541,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
           await videoTrack.applyConstraints({
             advanced: [{ torch: true }],
           } as any);
-          this.torchEnabled = true;
+          // this.torchEnabled = true;
           this.torchListeners.forEach(listener => listener({ isEnabled: true }));
         } else {
           throw new Error('Torch not available on this device');
@@ -554,9 +554,9 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
 
   async disableTorch(): Promise<void> {
     try {
-      if (this.scanner && this.scanner.hasFlash()) {
+      if (this.scanner && await this.scanner.hasFlash()) {
         await this.scanner.turnFlashOff();
-        this.torchEnabled = false;
+        // this.torchEnabled = false;
         this.torchListeners.forEach(listener => listener({ isEnabled: false }));
       } else if (this.currentStream) {
         const videoTrack = this.currentStream.getVideoTracks()[0];
@@ -566,7 +566,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
           await videoTrack.applyConstraints({
             advanced: [{ torch: false }],
           } as any);
-          this.torchEnabled = false;
+          // this.torchEnabled = false;
           this.torchListeners.forEach(listener => listener({ isEnabled: false }));
         }
       }
@@ -578,7 +578,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
   async isTorchAvailable(): Promise<{ available: boolean }> {
     try {
       if (this.scanner) {
-        return { available: this.scanner.hasFlash() };
+        return { available: await this.scanner.hasFlash() };
       }
       
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });

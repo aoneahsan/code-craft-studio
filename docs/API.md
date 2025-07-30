@@ -5,6 +5,7 @@
 - [Plugin API](#plugin-api)
 - [React Components](#react-components)
 - [Type Definitions](#type-definitions)
+- [Barcode Support](#barcode-support)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
 
@@ -865,4 +866,311 @@ import { qrTypeInfo, QRType } from 'qrcode-studio';
 const websiteInfo = qrTypeInfo[QRType.WEBSITE];
 console.log(websiteInfo);
 // Returns: { label: 'Website', icon: '🌐', description: 'Link to any website' }
+```
+
+## Barcode Support
+
+QRCode Studio provides comprehensive barcode scanning and generation capabilities alongside QR codes.
+
+### Barcode Methods
+
+#### readBarcodesFromImage(options)
+
+Read barcodes from an image file.
+
+```typescript
+readBarcodesFromImage(options: ReadBarcodeOptions): Promise<BarcodeScanResult>
+```
+
+**Parameters:**
+- `options` - Image path and format configuration
+
+**Returns:**
+- `BarcodeScanResult` - Array of detected barcodes
+
+**Example:**
+```typescript
+const result = await QRCodeStudio.readBarcodesFromImage({
+  path: '/path/to/image.jpg',
+  formats: ['EAN_13', 'CODE_128', 'QR_CODE']
+});
+
+result.barcodes.forEach(barcode => {
+  console.log(`Format: ${barcode.format}`);
+  console.log(`Data: ${barcode.rawValue}`);
+});
+```
+
+#### generateBarcode(options)
+
+Generate a barcode in various formats.
+
+```typescript
+generateBarcode(options: BarcodeGenerateOptions): Promise<BarcodeResult>
+```
+
+**Parameters:**
+- `options` - Barcode generation configuration
+
+**Returns:**
+- `BarcodeResult` - Generated barcode data
+
+**Example:**
+```typescript
+const barcode = await QRCodeStudio.generateBarcode({
+  format: 'EAN_13',
+  data: '5901234123457',
+  width: 300,
+  height: 100,
+  displayText: true,
+  outputFormat: 'png'
+});
+
+console.log('Barcode generated:', barcode.dataUrl);
+```
+
+#### getSupportedFormats()
+
+Get list of supported barcode formats.
+
+```typescript
+getSupportedFormats(): Promise<{ formats: string[] }>
+```
+
+**Example:**
+```typescript
+const { formats } = await QRCodeStudio.getSupportedFormats();
+console.log('Supported formats:', formats);
+// ['QR_CODE', 'EAN_13', 'EAN_8', 'UPC_A', 'UPC_E', 'CODE_128', ...]
+```
+
+### Barcode Components
+
+#### BarcodeScanner
+
+React component for barcode scanning.
+
+```tsx
+import { BarcodeScanner } from 'qrcode-studio';
+
+<BarcodeScanner
+  formats={['EAN_13', 'CODE_128', 'QR_CODE']}
+  onScan={(result) => {
+    console.log(`Scanned ${result.format}: ${result.rawValue}`);
+  }}
+  onError={(error) => {
+    console.error('Scan error:', error);
+  }}
+  continuous={false}
+  torch={false}
+/>
+```
+
+### Supported Barcode Formats
+
+#### 1D Barcodes
+- **EAN-13**: European Article Number (13 digits)
+- **EAN-8**: Compact EAN (8 digits)
+- **UPC-A**: Universal Product Code (12 digits)
+- **UPC-E**: Compact UPC (8 digits)
+- **Code 128**: High-density alphanumeric
+- **Code 39**: Alphanumeric with special characters
+- **Code 93**: Compact version of Code 39
+- **ITF/ITF-14**: Interleaved 2 of 5
+- **Codabar**: Numeric with special start/stop characters
+
+#### 2D Barcodes
+- **QR Code**: Quick Response code
+- **Data Matrix**: Compact 2D barcode
+- **PDF417**: Stacked linear barcode
+- **Aztec**: Compact 2D barcode
+
+### Barcode Type Definitions
+
+```typescript
+interface BarcodeScanResult {
+  barcodes: Array<{
+    format: string;
+    rawValue: string;
+    displayValue?: string;
+    boundingBox?: BoundingBox;
+    cornerPoints?: Point[];
+  }>;
+}
+
+interface BarcodeGenerateOptions {
+  format: BarcodeFormat;
+  data: string;
+  width?: number;
+  height?: number;
+  displayText?: boolean;
+  outputFormat?: 'png' | 'jpg' | 'svg';
+}
+
+interface BarcodeResult {
+  format: string;
+  data: string;
+  dataUrl: string;
+  width: number;
+  height: number;
+}
+```
+
+### Barcode Validation
+
+#### validateBarcodeData(format: string, data: string): boolean
+
+Validates barcode data based on format requirements.
+
+```typescript
+import { validateBarcodeData } from 'qrcode-studio';
+
+// Validate EAN-13 (must be 13 digits with valid checksum)
+console.log(validateBarcodeData('EAN_13', '5901234123457')); // true
+console.log(validateBarcodeData('EAN_13', '123')); // false
+
+// Validate Code 128 (ASCII characters)
+console.log(validateBarcodeData('CODE_128', 'ABC-123')); // true
+```
+
+#### getBarcodeConstraints(format: string)
+
+Get validation constraints for a barcode format.
+
+```typescript
+import { getBarcodeConstraints } from 'qrcode-studio';
+
+const constraints = getBarcodeConstraints('EAN_13');
+console.log(constraints);
+// {
+//   fixedLength: 13,
+//   pattern: '^\\d{13}$',
+//   description: 'Exactly 13 digits'
+// }
+```
+
+### Barcode Examples
+
+#### Product Scanner
+```tsx
+import React, { useState } from 'react';
+import { BarcodeScanner, validateBarcodeData } from 'qrcode-studio';
+
+function ProductScanner() {
+  const [product, setProduct] = useState(null);
+
+  const handleScan = async (result) => {
+    if (result.format === 'EAN_13' || result.format === 'UPC_A') {
+      // Look up product in database
+      const productInfo = await fetchProductInfo(result.rawValue);
+      setProduct(productInfo);
+    }
+  };
+
+  return (
+    <div>
+      <BarcodeScanner
+        formats={['EAN_13', 'UPC_A', 'EAN_8', 'UPC_E']}
+        onScan={handleScan}
+        continuous={false}
+      />
+      {product && (
+        <div>
+          <h3>{product.name}</h3>
+          <p>Price: ${product.price}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+#### Inventory Management
+```typescript
+import { QRCodeStudio } from 'qrcode-studio';
+
+async function generateInventoryLabel(item) {
+  // Generate Code 128 barcode for inventory
+  const barcode = await QRCodeStudio.generateBarcode({
+    format: 'CODE_128',
+    data: `INV-${item.id}-${item.location}`,
+    width: 300,
+    height: 80,
+    displayText: true
+  });
+
+  // Print or save the barcode
+  await printLabel(barcode.dataUrl);
+}
+
+async function scanInventoryItem() {
+  const result = await QRCodeStudio.readBarcodesFromImage({
+    path: 'captured-image.jpg',
+    formats: ['CODE_128', 'CODE_39']
+  });
+
+  const barcode = result.barcodes[0];
+  if (barcode && barcode.rawValue.startsWith('INV-')) {
+    const [, id, location] = barcode.rawValue.split('-');
+    return { id, location };
+  }
+}
+```
+
+#### Ticket Validation
+```tsx
+import React from 'react';
+import { QRCodeStudio } from 'qrcode-studio';
+
+function TicketValidator() {
+  const generateTicket = async (eventId, userId) => {
+    // Generate PDF417 barcode for ticket
+    const barcode = await QRCodeStudio.generateBarcode({
+      format: 'PDF_417',
+      data: JSON.stringify({
+        event: eventId,
+        user: userId,
+        timestamp: Date.now(),
+        signature: generateSignature(eventId, userId)
+      }),
+      width: 400,
+      height: 150
+    });
+
+    return barcode;
+  };
+
+  const validateTicket = async (scannedData) => {
+    try {
+      const ticketData = JSON.parse(scannedData);
+      const isValid = verifySignature(
+        ticketData.event,
+        ticketData.user,
+        ticketData.signature
+      );
+      
+      return {
+        valid: isValid,
+        event: ticketData.event,
+        user: ticketData.user
+      };
+    } catch (error) {
+      return { valid: false, error: 'Invalid ticket format' };
+    }
+  };
+
+  return (
+    <BarcodeScanner
+      formats={['PDF_417', 'QR_CODE']}
+      onScan={async (result) => {
+        const validation = await validateTicket(result.rawValue);
+        if (validation.valid) {
+          console.log('✅ Valid ticket for event:', validation.event);
+        } else {
+          console.log('❌ Invalid ticket:', validation.error);
+        }
+      }}
+    />
+  );
+}
 ```
