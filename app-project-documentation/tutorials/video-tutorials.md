@@ -1,15 +1,15 @@
-# Video Tutorials for QRCode Studio
+# Video Tutorials for Code Craft Studio
 
-This document outlines the video tutorial series for QRCode Studio. These tutorials help developers quickly understand and implement the plugin's features.
+This document outlines the video tutorial series for Code Craft Studio. These tutorials help developers quickly understand and implement the plugin's features.
 
 ## 📹 Tutorial Series Overview
 
 ### 1. Getting Started (5 minutes)
-**Title:** "QRCode Studio: Quick Start Guide"
-**Description:** Learn how to install and set up QRCode Studio in your Capacitor project.
+**Title:** "Code Craft Studio: Quick Start Guide"
+**Description:** Learn how to install and set up Code Craft Studio in your Capacitor project.
 
 **Script Outline:**
-1. Introduction to QRCode Studio (30s)
+1. Introduction to Code Craft Studio (30s)
 2. Installing the plugin (1m)
 3. Running the setup script (1m)
 4. Basic configuration (1m)
@@ -19,13 +19,13 @@ This document outlines the video tutorial series for QRCode Studio. These tutori
 
 **Key Commands Shown:**
 ```bash
-yarn add qrcode-studio
-npx qrcode-studio-setup
+yarn add code-craft-studio
+npx code-craft-studio-setup
 yarn build
 ```
 
 ### 2. QR Scanner Implementation (8 minutes)
-**Title:** "Building a QR Scanner with QRCode Studio"
+**Title:** "Building a QR Scanner with Code Craft Studio"
 **Description:** Step-by-step guide to implementing QR scanning functionality.
 
 **Script Outline:**
@@ -39,7 +39,7 @@ yarn build
 
 **Code Examples:**
 ```tsx
-import { QRScanner } from 'qrcode-studio/react';
+import { QRScanner } from 'code-craft-studio/react';
 
 function App() {
   const handleScan = (result) => {
@@ -86,7 +86,7 @@ function App() {
 8. Collaboration features (30s)
 
 ### 5. Advanced Integration (15 minutes)
-**Title:** "Advanced QRCode Studio Integration"
+**Title:** "Advanced Code Craft Studio Integration"
 **Description:** Implement advanced features like analytics, batch processing, and custom workflows.
 
 **Script Outline:**
@@ -121,7 +121,7 @@ function App() {
 - **Subtitles:** English (SRT files)
 
 ### Visual Elements
-1. **Intro/Outro:** Animated QRCode Studio logo (5s each)
+1. **Intro/Outro:** Animated Code Craft Studio logo (5s each)
 2. **Code Highlighting:** Syntax highlighting for all code
 3. **Screen Recording:** Show actual implementation
 4. **Annotations:** Highlight important UI elements
@@ -145,17 +145,17 @@ function App() {
 
 ```
 [INTRO - 0:00]
-"Welcome to QRCode Studio! In this quick tutorial, I'll show you how to get started with the most comprehensive QR code solution for Capacitor apps."
+"Welcome to Code Craft Studio! In this quick tutorial, I'll show you how to get started with the most comprehensive QR code solution for Capacitor apps."
 
 [INSTALLATION - 0:30]
-"First, let's install QRCode Studio in your project. Open your terminal and run:
-yarn add qrcode-studio
+"First, let's install Code Craft Studio in your project. Open your terminal and run:
+yarn add code-craft-studio
 
 This installs the plugin with all its dependencies."
 
 [SETUP SCRIPT - 1:30]
 "Now, let's run the interactive setup script:
-npx qrcode-studio-setup
+npx code-craft-studio-setup
 
 This will guide you through the initial configuration..."
 

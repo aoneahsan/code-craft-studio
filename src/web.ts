@@ -1012,7 +1012,7 @@ export class QRCodeStudioWeb extends WebPlugin implements QRCodeStudioPlugin {
     const vevent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//QRCode Studio//EN',
+      'PRODID:-//Code Craft Studio//EN',
       'BEGIN:VEVENT',
     ];
 

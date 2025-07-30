@@ -1,6 +1,6 @@
-# QRCode Studio API Playground
+# Code Craft Studio API Playground
 
-An interactive web-based tool for testing and exploring the QRCode Studio API methods.
+An interactive web-based tool for testing and exploring the Code Craft Studio API methods.
 
 ## Features
 
@@ -233,4 +233,4 @@ If integrating with real API:
 
 ---
 
-*The API Playground is designed to help developers quickly understand and test the QRCode Studio API without writing code.*
+*The API Playground is designed to help developers quickly understand and test the Code Craft Studio API without writing code.*

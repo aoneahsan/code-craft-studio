@@ -1,10 +1,10 @@
-# QRCode Studio Documentation Site
+# Code Craft Studio Documentation Site
 
-This document outlines the structure and implementation plan for the QRCode Studio documentation website using Docusaurus (latest version).
+This document outlines the structure and implementation plan for the Code Craft Studio documentation website using Docusaurus (latest version).
 
 ## 🌐 Documentation Site Overview
 
-**URL:** https://docs.qrcode-studio.dev  
+**URL:** https://docs.code-craft-studio.dev  
 **Technology:** Docusaurus 3.x  
 **Hosting:** Vercel/Netlify  
 **Domain:** Custom domain with SSL
@@ -12,7 +12,7 @@ This document outlines the structure and implementation plan for the QRCode Stud
 ## 📁 Site Structure
 
 ```
-docs.qrcode-studio.dev/
+docs.code-craft-studio.dev/
 ├── Home (Landing Page)
 ├── Getting Started
 │   ├── Installation
@@ -58,15 +58,15 @@ docs.qrcode-studio.dev/
 ```js
 // docusaurus.config.js theme configuration
 module.exports = {
-  title: 'QRCode Studio',
+  title: 'Code Craft Studio',
   tagline: 'The Ultimate QR Code Solution for Capacitor',
   favicon: 'img/favicon.ico',
   
   themeConfig: {
     navbar: {
-      title: 'QRCode Studio',
+      title: 'Code Craft Studio',
       logo: {
-        alt: 'QRCode Studio Logo',
+        alt: 'Code Craft Studio Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -92,7 +92,7 @@ module.exports = {
           position: 'left'
         },
         {
-          href: 'https://github.com/yourusername/qrcode-studio',
+          href: 'https://github.com/aoneahsan/code-craft-studio',
           label: 'GitHub',
           position: 'right',
         },
@@ -119,11 +119,11 @@ module.exports = {
           items: [
             {
               label: 'Discord',
-              href: 'https://discord.gg/qrcode-studio',
+              href: 'https://discord.gg/code-craft-studio',
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/qrcodestudio',
+              href: 'https://twitter.com/codecraftstudio',
             },
           ],
         },
@@ -136,12 +136,12 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/yourusername/qrcode-studio',
+              href: 'https://github.com/aoneahsan/code-craft-studio',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} QRCode Studio. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Code Craft Studio. Built with Docusaurus.`,
     },
     prism: {
       theme: lightCodeTheme,
@@ -154,7 +154,7 @@ module.exports = {
 
 ### Custom CSS
 ```css
-/* Custom styles for QRCode Studio docs */
+/* Custom styles for Code Craft Studio docs */
 :root {
   --ifm-color-primary: #2196F3;
   --ifm-color-primary-dark: #1976D2;
@@ -203,7 +203,7 @@ function APIExplorer() {
 
   const executeMethod = async () => {
     try {
-      const response = await QRCodeStudio[selectedMethod](params);
+      const response = await CodeCraftStudio[selectedMethod](params);
       setResult(response);
     } catch (error) {
       setResult({ error: error.message });
@@ -236,7 +236,7 @@ function CodePlayground({ defaultCode, height = '500px' }) {
     <BrowserOnly>
       {() => (
         <iframe
-          src={`https://codesandbox.io/embed/qrcode-studio-playground?codemirror=1&fontsize=14&hidenavigation=1&theme=dark&view=split&module=${encodeURIComponent(defaultCode)}`}
+          src={`https://codesandbox.io/embed/code-craft-studio-playground?codemirror=1&fontsize=14&hidenavigation=1&theme=dark&view=split&module=${encodeURIComponent(defaultCode)}`}
           style={{
             width: '100%',
             height: height,
@@ -244,7 +244,7 @@ function CodePlayground({ defaultCode, height = '500px' }) {
             borderRadius: '4px',
             overflow: 'hidden'
           }}
-          title="QRCode Studio Playground"
+          title="Code Craft Studio Playground"
           allow="camera"
           sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
         />
@@ -283,7 +283,7 @@ module.exports = {
     algolia: {
       appId: 'YOUR_APP_ID',
       apiKey: 'YOUR_SEARCH_API_KEY',
-      indexName: 'qrcode-studio',
+      indexName: 'code-craft-studio',
       contextualSearch: true,
       searchParameters: {},
     },
@@ -324,12 +324,12 @@ Learn how to implement a QR code scanner in your Capacitor app.
 <Tabs>
   <TabItem value="npm" label="npm" default>
     ```bash
-    npm install qrcode-studio
+    npm install code-craft-studio
     ```
   </TabItem>
   <TabItem value="yarn" label="Yarn">
     ```bash
-    yarn add qrcode-studio
+    yarn add code-craft-studio
     ```
   </TabItem>
 </Tabs>
@@ -366,7 +366,7 @@ Learn how to implement a QR code scanner in your Capacitor app.
 ### Docusaurus Setup
 ```bash
 # Create documentation site
-npx create-docusaurus@latest docs qrcode-studio classic --typescript
+npx create-docusaurus@latest docs code-craft-studio classic --typescript
 
 # Install dependencies
 cd docs
@@ -387,13 +387,13 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/yourusername/qrcode-studio/tree/main/docs/',
+          editUrl: 'https://github.com/aoneahsan/code-craft-studio/tree/main/docs/',
           remarkPlugins: [require('remark-math')],
           rehypePlugins: [require('rehype-katex')],
         },
         blog: {
           showReadingTime: true,
-          editUrl: 'https://github.com/yourusername/qrcode-studio/tree/main/docs/',
+          editUrl: 'https://github.com/aoneahsan/code-craft-studio/tree/main/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -515,12 +515,12 @@ module.exports = {
 function SEO({ title, description, keywords }) {
   return (
     <Head>
-      <title>{title} | QRCode Studio</title>
+      <title>{title} | Code Craft Studio</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords.join(', ')} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content="https://docs.qrcode-studio.dev/img/og-image.png" />
+      <meta property="og:image" content="https://docs.code-craft-studio.dev/img/og-image.png" />
       <meta name="twitter:card" content="summary_large_image" />
     </Head>
   );

@@ -1,18 +1,29 @@
-# QRCode Studio App - Feature Specifications
+# Code Craft Studio App - Feature Specifications
 
 ## 📱 Core Features
 
 ### 1. QR Code Scanner
 - **Camera Integration**: Native camera access with permission handling
 - **Real-time Scanning**: Continuous scanning with configurable delay
-- **Multi-format Support**: QR codes, barcodes (if needed)
+- **Multi-format Support**: QR codes and all major barcodes
 - **Torch Control**: Flashlight toggle for low-light conditions
 - **Camera Switch**: Front/back camera toggle
 - **Scan History**: Automatic saving of scanned codes
 - **Smart Actions**: Automatic actions based on QR type (open URL, connect WiFi, etc.)
 
-### 2. QR Code Generator
-- **22+ QR Types**: Full support for all qrcode-studio types
+### 2. Barcode Scanner
+- **14+ Format Support**:
+  - 1D Barcodes: EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, Code 93, ITF, Codabar
+  - 2D Barcodes: QR Code, Data Matrix, PDF417, Aztec
+- **Product Lookup**: Automatic product information retrieval for EAN/UPC codes
+- **Inventory Management**: Code 128/Code 39 for warehouse operations
+- **Ticket Validation**: PDF417 for event tickets and boarding passes
+- **Batch Scanning**: Scan multiple barcodes in sequence
+- **Format Filtering**: Scan only specific barcode types
+- **Validation**: Real-time checksum validation for all formats
+
+### 3. QR Code Generator
+- **22+ QR Types**: Full support for all code-craft-studio types
 - **Live Preview**: Real-time preview as user types
 - **Design Customization**:
   - Colors (foreground/background)
@@ -23,26 +34,37 @@
 - **Templates**: Pre-designed templates for quick creation
 - **Batch Generation**: Create multiple QR codes at once
 
-### 3. History Management
-- **Chronological List**: Recent QR codes sorted by date
+### 4. Barcode Generator
+- **All Major Formats**: EAN-13, UPC-A, Code 128, Code 39, ITF-14, and more
+- **Text Display**: Optional human-readable text below barcode
+- **Size Customization**: Adjustable width and height
+- **Export Options**: PNG, JPG, SVG formats
+- **Batch Generation**: Create multiple barcodes from CSV/Excel
+- **Validation**: Pre-generation validation to ensure valid data
+- **Label Printing**: Print-ready barcode labels with custom text
+
+### 5. History Management
+- **Chronological List**: Recent QR codes and barcodes sorted by date
 - **Filtering Options**:
   - All codes
+  - QR codes only
+  - Barcodes only
   - Scanned codes
   - Generated codes
   - Favorites
-  - By type
-- **Search**: Find QR codes by content or type
-- **Favorites**: Star important QR codes
+  - By type/format
+- **Search**: Find codes by content, type, or format
+- **Favorites**: Star important codes
 - **Bulk Actions**: Delete multiple items
 
-### 4. Sharing & Export
+### 6. Sharing & Export
 - **Multiple Formats**: PNG, JPG, SVG, PDF, JSON
 - **Direct Sharing**: Native share sheet integration
-- **Print Support**: Print QR codes directly
-- **Email/SMS**: Send QR codes via email or SMS
+- **Print Support**: Print QR codes and barcodes directly
+- **Email/SMS**: Send codes via email or SMS
 - **Cloud Backup**: Optional cloud sync
 
-### 5. Analytics Dashboard
+### 7. Analytics Dashboard
 - **Scan Tracking**: Number of scans per QR code
 - **Geographic Data**: Where QR codes are scanned
 - **Device Analytics**: Types of devices scanning
@@ -115,11 +137,14 @@
 ## 📊 Advanced Features
 
 ### 1. Smart Features
-- **Auto-categorization**: Automatically organize QR codes
-- **Duplicate Detection**: Warn about duplicate QRs
+- **Auto-categorization**: Automatically organize QR codes and barcodes
+- **Duplicate Detection**: Warn about duplicate codes
 - **Content Preview**: Preview without scanning
 - **OCR Support**: Extract text from images
 - **Batch Scanner**: Scan multiple codes quickly
+- **Product Information**: Auto-fetch product details for EAN/UPC barcodes
+- **Format Auto-detection**: Automatically detect and validate barcode formats
+- **Smart Actions**: Context-aware actions based on barcode type
 
 ### 2. Power User Tools
 - **Regex Support**: Advanced text QR creation

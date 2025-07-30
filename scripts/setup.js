@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🚀 QRCode Studio Setup\n');
+console.log('🚀 Code Craft Studio Setup\n');
 
 // Colors for console output
 const colors = {
@@ -32,7 +32,7 @@ function createFile(filePath, content) {
 function setupProject() {
   const projectRoot = process.cwd();
   
-  log('Setting up QRCode Studio in your project...', 'bright');
+  log('Setting up Code Craft Studio in your project...', 'bright');
   
   // 1. Create directory structure
   log('\n📁 Creating directory structure...', 'blue');
@@ -71,13 +71,13 @@ function setupProject() {
   // HomePage.tsx
   createFile(path.join(projectRoot, 'src/pages/HomePage.tsx'), `import React from 'react';
 import { Link } from 'react-router-dom';
-import { QRStudio } from 'qrcode-studio';
+import { QRStudio } from 'code-craft-studio';
 
 export const HomePage: React.FC = () => {
   return (
     <div className="home-page">
       <header className="app-header">
-        <h1>QRCode Studio</h1>
+        <h1>Code Craft Studio</h1>
         <p>Scan, Generate, and Manage QR Codes</p>
       </header>
       
@@ -122,7 +122,7 @@ export const HomePage: React.FC = () => {
   // ScannerPage.tsx
   createFile(path.join(projectRoot, 'src/pages/ScannerPage.tsx'), `import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QRScanner } from 'qrcode-studio';
+import { QRScanner } from 'code-craft-studio';
 
 export const ScannerPage: React.FC = () => {
   const navigate = useNavigate();
@@ -242,7 +242,7 @@ export const useQRStore = create<QRStore>()(
   // App.tsx with routing
   createFile(path.join(projectRoot, 'src/App.tsx'), `import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import 'qrcode-studio/src/styles/qrcode-studio.css';
+import 'code-craft-studio/src/styles/code-craft-studio.css';
 import './styles/app.css';
 
 // Lazy load pages for better performance
@@ -483,7 +483,7 @@ REACT_APP_ENABLE_CLOUD_SYNC=false
 
 const config: CapacitorConfig = {
   appId: 'com.yourcompany.qrcodeapp',
-  appName: 'QRCode Studio',
+  appName: 'Code Craft Studio',
   webDir: 'build',
   bundledWebRuntime: false,
   plugins: {
@@ -491,7 +491,7 @@ const config: CapacitorConfig = {
       presentationStyle: 'fullscreen',
     },
     Preferences: {
-      group: 'qrcode-studio',
+      group: 'code-craft-studio',
     },
   },
 };

@@ -1,6 +1,6 @@
-# QRCode Studio App - Project Documentation
+# Code Craft Studio App - Project Documentation
 
-This documentation will guide you through building a complete QR code application using the `qrcode-studio` package with React and Capacitor.
+This documentation will guide you through building a complete QR code and barcode application using the `code-craft-studio` package with React and Capacitor.
 
 ## 📋 Table of Contents
 
@@ -14,13 +14,16 @@ This documentation will guide you through building a complete QR code applicatio
 ## 🎯 Project Overview
 
 ### Goal
-Build a professional QR code application that allows users to:
-- Scan QR codes using device camera
+Build a professional QR code and barcode application that allows users to:
+- Scan QR codes and barcodes using device camera
 - Generate QR codes for 22+ different data types
-- Customize QR code designs
-- Save and manage QR code history
-- Track QR code analytics
-- Share QR codes across platforms
+- Generate barcodes in 14+ formats (EAN, UPC, Code 128, etc.)
+- Customize QR code and barcode designs
+- Save and manage scan/generation history
+- Track analytics for both QR codes and barcodes
+- Share codes across platforms
+- Validate barcode checksums
+- Look up product information from EAN/UPC codes
 
 ### Target Platforms
 - Web (Progressive Web App)
@@ -30,7 +33,7 @@ Build a professional QR code application that allows users to:
 ### Tech Stack
 - **Frontend**: React 18+ with TypeScript
 - **Mobile**: Capacitor 5+
-- **QR Features**: qrcode-studio package
+- **QR Features**: code-craft-studio package
 - **State Management**: Zustand or Context API
 - **Styling**: Tailwind CSS or styled-components
 - **Backend** (optional): Supabase or Firebase for analytics
@@ -50,11 +53,11 @@ npm install @capacitor/core @capacitor/cli
 # Initialize Capacitor
 npx cap init "QRCode App" com.yourcompany.qrcodeapp
 
-# Install qrcode-studio package
-npm install qrcode-studio
+# Install code-craft-studio package
+npm install code-craft-studio
 
 # Run the automated setup
-npx qrcode-studio-setup
+npx code-craft-studio-setup
 ```
 
 ### 2. Add Platforms
@@ -161,8 +164,8 @@ export const useQRStore = create<QRStore>()(
 // src/App.tsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QRCodeStudio } from 'qrcode-studio';
-import 'qrcode-studio/src/styles/qrcode-studio.css';
+import { QRCodeStudio } from 'code-craft-studio';
+import 'code-craft-studio/src/styles/code-craft-studio.css';
 import './App.css';
 
 // Pages
@@ -201,7 +204,7 @@ export default App;
 // src/pages/HomePage.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QRStudio } from 'qrcode-studio';
+import { QRStudio } from 'code-craft-studio';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -209,7 +212,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="home-page">
       <header className="app-header">
-        <h1>QRCode Studio</h1>
+        <h1>Code Craft Studio</h1>
         <p>Professional QR Code Scanner & Generator</p>
       </header>
 
@@ -271,7 +274,7 @@ export default HomePage;
 // src/pages/ScannerPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QRScanner, ScanResult } from 'qrcode-studio';
+import { QRScanner, ScanResult } from 'code-craft-studio';
 import { useQRStore } from '../store/qrStore';
 
 const ScannerPage: React.FC = () => {
@@ -376,7 +379,7 @@ export default ScannerPage;
 // src/pages/GeneratorPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QRGenerator, QRType, QRData, QRCodeResult } from 'qrcode-studio';
+import { QRGenerator, QRType, QRData, QRCodeResult } from 'code-craft-studio';
 import { useQRStore } from '../store/qrStore';
 
 const GeneratorPage: React.FC = () => {
@@ -546,7 +549,7 @@ export default GeneratorPage;
 // src/pages/HistoryPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 import { useQRStore } from '../store/qrStore';
 
 const HistoryPage: React.FC = () => {
@@ -1025,7 +1028,7 @@ body {
 
 ```typescript
 // src/services/analytics.ts
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 
 export class AnalyticsService {
   static async trackScan(qrCodeId: string, data: any) {

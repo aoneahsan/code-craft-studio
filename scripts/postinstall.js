@@ -9,7 +9,7 @@ const colors = {
   bright: '\x1b[1m',
   green: '\x1b[32m',
   yellow: '\x1b[33m',
-  blue: '\x1b[34m'
+  blue: '\x1b[34m',
 };
 
 function log(message, color = 'reset') {
@@ -17,21 +17,27 @@ function log(message, color = 'reset') {
 }
 
 console.log();
-log('🎉 Thank you for installing QRCode Studio!', 'bright');
+log('🎉 Thank you for installing Code Craft Studio!', 'bright');
 console.log();
 
 log('📚 Quick Start:', 'blue');
-console.log('   1. Run setup: npx qrcode-studio-setup');
-console.log('   2. Import components: import { QRStudio } from "qrcode-studio"');
+console.log('   1. Run setup: npx code-craft-studio-setup');
+console.log(
+  '   2. Import components: import { QRStudio } from "code-craft-studio"'
+);
 console.log('   3. Start building your QR code app!');
 console.log();
 
 log('📖 Resources:', 'blue');
-console.log('   - Documentation: https://github.com/aoneahsan/qrcode-studio#readme');
-console.log('   - Examples: Check qrcode-studio-examples.tsx after setup');
-console.log('   - Issues: https://github.com/aoneahsan/qrcode-studio/issues');
+console.log(
+  '   - Documentation: https://github.com/aoneahsan/code-craft-studio#readme'
+);
+console.log('   - Examples: Check code-craft-studio-examples.tsx after setup');
+console.log(
+  '   - Issues: https://github.com/aoneahsan/code-craft-studio/issues'
+);
 console.log();
 
 log('💡 Tip:', 'yellow');
-console.log('   For a complete app setup, run: npx qrcode-studio-setup');
+console.log('   For a complete app setup, run: npx code-craft-studio-setup');
 console.log();

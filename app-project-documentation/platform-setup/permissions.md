@@ -1,10 +1,10 @@
 # Native Permission Handling Guide
 
-This document explains how to properly configure and handle permissions for QRCode Studio on iOS and Android platforms.
+This document explains how to properly configure and handle permissions for Code Craft Studio on iOS and Android platforms.
 
 ## Overview
 
-QRCode Studio requires the following permissions:
+Code Craft Studio requires the following permissions:
 - **Camera**: For scanning QR codes
 - **Photo Library**: For scanning QR codes from images
 
@@ -86,11 +86,11 @@ If using ProGuard/R8, add these rules to `android/app/proguard-rules.pro`:
 ### Checking Permissions
 
 ```typescript
-import { QRCodeStudio } from 'qrcode-studio';
+import { CodeCraftStudio } from 'code-craft-studio';
 
 // Check current permission status
 const checkPermissions = async () => {
-  const result = await QRCodeStudio.checkPermissions();
+  const result = await CodeCraftStudio.checkPermissions();
   console.log(result);
   // Result: { camera: 'granted' | 'denied' | 'prompt', photos: 'granted' | 'denied' | 'prompt' }
 };
@@ -101,7 +101,7 @@ const checkPermissions = async () => {
 ```typescript
 // Request specific permissions
 const requestCameraPermission = async () => {
-  const result = await QRCodeStudio.requestPermissions({
+  const result = await CodeCraftStudio.requestPermissions({
     permissions: ['camera']
   });
   
@@ -114,7 +114,7 @@ const requestCameraPermission = async () => {
 
 // Request multiple permissions
 const requestAllPermissions = async () => {
-  const result = await QRCodeStudio.requestPermissions({
+  const result = await CodeCraftStudio.requestPermissions({
     permissions: ['camera', 'photos']
   });
   
@@ -128,7 +128,7 @@ const requestAllPermissions = async () => {
 const startScanning = async () => {
   try {
     // The plugin automatically requests camera permission if needed
-    const result = await QRCodeStudio.scan({
+    const result = await CodeCraftStudio.scan({
       formats: ['QR_CODE'],
       prompt: 'Scan a QR code'
     });
@@ -150,18 +150,18 @@ const startScanning = async () => {
 ```typescript
 // Good: Request permission when needed
 const scanButton = () => {
-  QRCodeStudio.scan(); // Permission requested automatically
+  CodeCraftStudio.scan(); // Permission requested automatically
 };
 
 // Better: Check permission status first
 const scanButton = async () => {
-  const { camera } = await QRCodeStudio.checkPermissions();
+  const { camera } = await CodeCraftStudio.checkPermissions();
   
   if (camera === 'denied') {
     // Show explanation why camera is needed
     showCameraRationale();
   } else {
-    QRCodeStudio.scan();
+    CodeCraftStudio.scan();
   }
 };
 ```
@@ -177,7 +177,7 @@ const showCameraRationale = () => {
   );
   
   if (dialog) {
-    QRCodeStudio.requestPermissions({ permissions: ['camera'] });
+    CodeCraftStudio.requestPermissions({ permissions: ['camera'] });
   }
 };
 ```
@@ -221,7 +221,7 @@ const openAppSettings = async () => {
 ```typescript
 const handleScan = async () => {
   try {
-    const result = await QRCodeStudio.scan();
+    const result = await CodeCraftStudio.scan();
     // Handle successful scan
   } catch (error) {
     switch (error.code) {
@@ -284,7 +284,7 @@ const handleScan = async () => {
 
 ```typescript
 const debugPermissions = async () => {
-  const permissions = await QRCodeStudio.checkPermissions();
+  const permissions = await CodeCraftStudio.checkPermissions();
   console.log('Current permissions:', permissions);
   
   // Platform info

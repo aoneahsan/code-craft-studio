@@ -262,7 +262,7 @@ function generateCodeExample() {
     
     if (config.parameters) {
         const params = document.getElementById('parametersEditor').value;
-        code = `import { QRCodeStudio } from 'qrcode-studio';
+        code = `import { QRCodeStudio } from 'code-craft-studio';
 
 try {
   const result = await QRCodeStudio.${currentMethod}(${params});
@@ -271,7 +271,7 @@ try {
   console.error('Error:', error);
 }`;
     } else {
-        code = `import { QRCodeStudio } from 'qrcode-studio';
+        code = `import { QRCodeStudio } from 'code-craft-studio';
 
 try {
   const result = await QRCodeStudio.${currentMethod}();

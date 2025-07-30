@@ -1,6 +1,6 @@
-# Contributing to QRCode Studio
+# Contributing to Code Craft Studio
 
-First off, thank you for considering contributing to QRCode Studio! It's people like you that make QRCode Studio such a great tool.
+First off, thank you for considering contributing to Code Craft Studio! It's people like you that make Code Craft Studio such a great tool.
 
 ## Code of Conduct
 

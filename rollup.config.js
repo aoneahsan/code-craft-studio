@@ -8,7 +8,7 @@ export default {
     {
       file: 'dist/plugin.js',
       format: 'iife',
-      name: 'QrCodeStudio',
+      name: 'CodeCraftStudio',
       globals: {
         '@capacitor/core': 'capacitorExports',
         '@capacitor/preferences': 'capacitorPreferences',

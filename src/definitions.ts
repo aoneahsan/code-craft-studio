@@ -1,7 +1,7 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 /**
- * QRCode Studio Plugin Interface
+ * Code Craft Studio Plugin Interface
  */
 export interface QRCodeStudioPlugin {
   /**

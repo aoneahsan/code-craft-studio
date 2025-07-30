@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.yourcompany.qrcodeapp',
-  appName: 'QRCode Studio',
+  appName: 'Code Craft Studio',
   webDir: 'build',
   server: {
     androidScheme: 'https'

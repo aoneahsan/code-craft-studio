@@ -1,15 +1,15 @@
-# Interactive Examples for QRCode Studio
+# Interactive Examples for Code Craft Studio
 
-This document provides interactive code examples that developers can run directly in their browsers to explore QRCode Studio features.
+This document provides interactive code examples that developers can run directly in their browsers to explore Code Craft Studio features.
 
 ## 🚀 CodeSandbox Examples
 
 ### 1. Basic QR Scanner
-**[Open in CodeSandbox](https://codesandbox.io/s/qrcode-studio-scanner)**
+**[Open in CodeSandbox](https://codesandbox.io/s/code-craft-studio-scanner)**
 
 ```tsx
 import React, { useState } from 'react';
-import { QRScanner } from 'qrcode-studio/react';
+import { QRScanner } from 'code-craft-studio/react';
 import './styles.css';
 
 export default function App() {
@@ -54,12 +54,12 @@ export default function App() {
 ```
 
 ### 2. QR Generator with Customization
-**[Open in CodeSandbox](https://codesandbox.io/s/qrcode-studio-generator)**
+**[Open in CodeSandbox](https://codesandbox.io/s/code-craft-studio-generator)**
 
 ```tsx
 import React, { useState } from 'react';
-import { QRGenerator } from 'qrcode-studio/react';
-import { QRType } from 'qrcode-studio';
+import { QRGenerator } from 'code-craft-studio/react';
+import { QRType } from 'code-craft-studio';
 
 export default function App() {
   const [qrType, setQrType] = useState(QRType.WEBSITE);
@@ -137,12 +137,12 @@ export default function App() {
 ```
 
 ### 3. WiFi QR Code Generator
-**[Open in CodeSandbox](https://codesandbox.io/s/qrcode-studio-wifi)**
+**[Open in CodeSandbox](https://codesandbox.io/s/code-craft-studio-wifi)**
 
 ```tsx
 import React, { useState } from 'react';
-import { QRGenerator } from 'qrcode-studio/react';
-import { QRType } from 'qrcode-studio';
+import { QRGenerator } from 'code-craft-studio/react';
+import { QRType } from 'code-craft-studio';
 
 export default function WiFiQRGenerator() {
   const [wifiData, setWifiData] = useState({
@@ -229,12 +229,12 @@ export default function WiFiQRGenerator() {
 ```
 
 ### 4. vCard Contact Generator
-**[Open in CodeSandbox](https://codesandbox.io/s/qrcode-studio-vcard)**
+**[Open in CodeSandbox](https://codesandbox.io/s/code-craft-studio-vcard)**
 
 ```tsx
 import React, { useState } from 'react';
-import { QRGenerator } from 'qrcode-studio/react';
-import { QRType } from 'qrcode-studio';
+import { QRGenerator } from 'code-craft-studio/react';
+import { QRType } from 'code-craft-studio';
 
 export default function VCardGenerator() {
   const [contact, setContact] = useState({
@@ -322,11 +322,11 @@ export default function VCardGenerator() {
 ```
 
 ### 5. QR Studio Full Demo
-**[Open in CodeSandbox](https://codesandbox.io/s/qrcode-studio-full)**
+**[Open in CodeSandbox](https://codesandbox.io/s/code-craft-studio-full)**
 
 ```tsx
 import React from 'react';
-import { QRStudio } from 'qrcode-studio/react';
+import { QRStudio } from 'code-craft-studio/react';
 
 export default function App() {
   const config = {
@@ -363,7 +363,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>QRCode Studio - Full Demo</h1>
+      <h1>Code Craft Studio - Full Demo</h1>
       
       <QRStudio
         config={config}
@@ -382,9 +382,9 @@ export default function App() {
 ```html
 <!-- Embed in documentation -->
 <iframe
-  src="https://codesandbox.io/embed/qrcode-studio-playground"
+  src="https://codesandbox.io/embed/code-craft-studio-playground"
   style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
-  title="QRCode Studio Playground"
+  title="Code Craft Studio Playground"
   allow="camera; accelerometer; ambient-light-sensor; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
   sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
 ></iframe>
@@ -404,7 +404,7 @@ export function ConfigBuilder() {
   };
 
   const generateCode = (conf) => {
-    return `import { QRStudio } from 'qrcode-studio/react';
+    return `import { QRStudio } from 'code-craft-studio/react';
 
 export default function App() {
   return (
@@ -483,11 +483,11 @@ export default function App() {
 ```swift
 // Swift example for iOS integration
 import Capacitor
-import QRCodeStudio
+import CodeCraftStudio
 
 class ViewController: UIViewController {
     @IBAction func scanQR() {
-        QRCodeStudio.scan { result in
+        CodeCraftStudio.scan { result in
             print("Scanned: \(result)")
         }
     }
@@ -497,11 +497,11 @@ class ViewController: UIViewController {
 ### Android Example
 ```kotlin
 // Kotlin example for Android
-import com.qrcodestudio.QRCodeStudio
+import com.codecraftstudio.CodeCraftStudio
 
 class MainActivity : AppCompatActivity() {
     fun scanQR() {
-        QRCodeStudio.scan { result ->
+        CodeCraftStudio.scan { result ->
             Log.d("QR", "Scanned: $result")
         }
     }
@@ -511,14 +511,14 @@ class MainActivity : AppCompatActivity() {
 ## 🔗 Resources
 
 ### Example Repository
-- GitHub: [qrcode-studio-examples](https://github.com/yourusername/qrcode-studio-examples)
+- GitHub: [code-craft-studio-examples](https://github.com/aoneahsan/code-craft-studio-examples)
 - Clone and run locally
 - Contribute new examples
 
 ### Live Demos
-1. [Scanner Demo](https://qrcode-studio-demo.netlify.app/scanner)
-2. [Generator Demo](https://qrcode-studio-demo.netlify.app/generator)
-3. [Studio Demo](https://qrcode-studio-demo.netlify.app/studio)
+1. [Scanner Demo](https://code-craft-studio-demo.netlify.app/scanner)
+2. [Generator Demo](https://code-craft-studio-demo.netlify.app/generator)
+3. [Studio Demo](https://code-craft-studio-demo.netlify.app/studio)
 
 ### API Playground
 - Interactive API documentation

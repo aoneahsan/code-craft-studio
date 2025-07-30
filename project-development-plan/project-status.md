@@ -1,4 +1,4 @@
-# QRCode Studio Project Status
+# Code Craft Studio Project Status
 
 ## ✅ Completed Features
 
@@ -45,7 +45,7 @@
 - ✅ License file
 
 ### Development Tools
-- ✅ Setup script (npx qrcode-studio-setup)
+- ✅ Setup script (npx code-craft-studio-setup)
 - ✅ Post-install script
 - ✅ Build configuration
 - ✅ TypeScript configuration

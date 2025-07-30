@@ -1,6 +1,6 @@
 # Platform-Specific Optimizations Guide
 
-This document outlines performance optimizations and best practices for QRCode Studio on different platforms.
+This document outlines performance optimizations and best practices for Code Craft Studio on different platforms.
 
 ## General Optimizations
 
@@ -9,12 +9,12 @@ This document outlines performance optimizations and best practices for QRCode S
 ```typescript
 // Use dynamic imports for heavy components
 const loadQRStudio = async () => {
-  const { QRStudio } = await import('qrcode-studio/react');
+  const { QRStudio } = await import('code-craft-studio/react');
   return QRStudio;
 };
 
 // Tree-shake unused QR types
-import { QRGenerator, QRType } from 'qrcode-studio';
+import { QRGenerator, QRType } from 'code-craft-studio';
 // Only import types you need
 const types = [QRType.TEXT, QRType.WEBSITE, QRType.WIFI];
 ```
@@ -28,7 +28,7 @@ class QRScannerComponent extends React.Component {
   componentWillUnmount() {
     // Always clean up scanner resources
     if (this.scanner) {
-      QRCodeStudio.stopScan();
+      CodeCraftStudio.stopScan();
       this.scanner = null;
     }
   }
@@ -77,7 +77,7 @@ private func enhanceQRImage(_ image: CIImage) -> CIImage? {
 ```swift
 // Configure background queue for heavy operations
 private let processingQueue = DispatchQueue(
-    label: "com.qrcodestudio.processing",
+    label: "com.codecraftstudio.processing",
     qos: .userInitiated,
     attributes: .concurrent
 )
@@ -97,7 +97,7 @@ func generateLargeQRCode(data: String, completion: @escaping (UIImage?) -> Void)
 
 ```ruby
 # In Podfile - Use subspecs to reduce size
-pod 'QrCodeStudio', :subspecs => ['Core', 'Scanner']
+pod 'CodeCraftStudio', :subspecs => ['Core', 'Scanner']
 # Exclude unused architectures
 config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
 ```
@@ -183,15 +183,15 @@ protected void handleOnDestroy() {
 ### 4. ProGuard Optimization
 
 ```proguard
-# Optimize QRCode Studio
+# Optimize Code Craft Studio
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -dontpreverify
 
 # Keep only necessary classes
--keep class com.qrcodestudio.** { *; }
--keepclassmembers class com.qrcodestudio.** { *; }
+-keep class com.codecraftstudio.** { *; }
+-keepclassmembers class com.codecraftstudio.** { *; }
 
 # Remove logging in release
 -assumenosideeffects class android.util.Log {
@@ -208,7 +208,7 @@ protected void handleOnDestroy() {
 ```typescript
 // Lazy load scanner when needed
 const QRScannerLazy = React.lazy(() => 
-  import('qrcode-studio/react').then(module => ({
+  import('code-craft-studio/react').then(module => ({
     default: module.QRScanner
   }))
 );
@@ -322,7 +322,7 @@ public class PerformanceTracker {
 const measureQRGeneration = async (data: string) => {
   performance.mark('qr-generation-start');
   
-  const qrCode = await QRCodeStudio.generate({
+  const qrCode = await CodeCraftStudio.generate({
     type: 'text',
     data: { text: data }
   });
@@ -452,7 +452,7 @@ class QRBatchProcessor {
     const batch = this.queue.splice(0, 10); // Process 10 at a time
     
     const results = await Promise.all(
-      batch.map(item => QRCodeStudio.generate(item.data))
+      batch.map(item => CodeCraftStudio.generate(item.data))
     );
     
     batch.forEach((item, index) => {
@@ -477,7 +477,7 @@ if (Capacitor.getPlatform() === 'ios') {
   // Enable haptic feedback
   const { Haptics, ImpactStyle } = await import('@capacitor/haptics');
   
-  QRCodeStudio.scan({
+  CodeCraftStudio.scan({
     onScanSuccess: async (result) => {
       await Haptics.impact({ style: ImpactStyle.Light });
       handleScanResult(result);

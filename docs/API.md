@@ -1,4 +1,4 @@
-# QRCode Studio API Documentation
+# Code Craft Studio API Documentation
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ The main plugin interface provides methods for QR code scanning, generation, and
 #### Import
 
 ```typescript
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 ```
 
 #### Methods
@@ -262,7 +262,7 @@ removeAllListeners(): Promise<void>
 A ready-to-use QR code scanner component.
 
 ```typescript
-import { QRScanner } from 'qrcode-studio';
+import { QRScanner } from 'code-craft-studio';
 ```
 
 #### Props
@@ -301,7 +301,7 @@ import { QRScanner } from 'qrcode-studio';
 Component for generating QR codes with customization options.
 
 ```typescript
-import { QRGenerator } from 'qrcode-studio';
+import { QRGenerator } from 'code-craft-studio';
 ```
 
 #### Props
@@ -352,7 +352,7 @@ import { QRGenerator } from 'qrcode-studio';
 Full-featured QR code studio component with scanner, generator, and history.
 
 ```typescript
-import { QRStudio } from 'qrcode-studio';
+import { QRStudio } from 'code-craft-studio';
 ```
 
 #### Props
@@ -577,7 +577,7 @@ try {
 
 ```tsx
 import React, { useState } from 'react';
-import { QRScanner, ScanResult } from 'qrcode-studio';
+import { QRScanner, ScanResult } from 'code-craft-studio';
 
 function ScannerPage() {
   const [lastScan, setLastScan] = useState<ScanResult | null>(null);
@@ -628,7 +628,7 @@ function ScannerPage() {
 
 ```tsx
 import React, { useState } from 'react';
-import { QRGenerator, QRType } from 'qrcode-studio';
+import { QRGenerator, QRType } from 'code-craft-studio';
 
 function DynamicGenerator() {
   const [qrType, setQrType] = useState<QRType>('website');
@@ -716,7 +716,7 @@ function DynamicGenerator() {
 ### Plugin API Usage
 
 ```typescript
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 
 async function generateBusinessCard() {
   try {
@@ -761,7 +761,7 @@ async function generateBusinessCard() {
 
 ## Utility Functions
 
-QRCode Studio exports several utility functions to help with data validation:
+Code Craft Studio exports several utility functions to help with data validation:
 
 ### Validators
 
@@ -770,7 +770,7 @@ QRCode Studio exports several utility functions to help with data validation:
 Validates if a string is a valid HTTP/HTTPS URL.
 
 ```typescript
-import { isValidUrl } from 'qrcode-studio';
+import { isValidUrl } from 'code-craft-studio';
 
 console.log(isValidUrl('https://example.com')); // true
 console.log(isValidUrl('not-a-url')); // false
@@ -781,7 +781,7 @@ console.log(isValidUrl('not-a-url')); // false
 Validates if a string is a valid email address.
 
 ```typescript
-import { isValidEmail } from 'qrcode-studio';
+import { isValidEmail } from 'code-craft-studio';
 
 console.log(isValidEmail('user@example.com')); // true
 console.log(isValidEmail('invalid-email')); // false
@@ -792,7 +792,7 @@ console.log(isValidEmail('invalid-email')); // false
 Validates if a string is a valid international phone number (E.164 format).
 
 ```typescript
-import { isValidPhoneNumber } from 'qrcode-studio';
+import { isValidPhoneNumber } from 'code-craft-studio';
 
 console.log(isValidPhoneNumber('+1234567890')); // true
 console.log(isValidPhoneNumber('123456')); // false
@@ -803,7 +803,7 @@ console.log(isValidPhoneNumber('123456')); // false
 Validates if a string is a valid hex color code.
 
 ```typescript
-import { isValidHexColor } from 'qrcode-studio';
+import { isValidHexColor } from 'code-craft-studio';
 
 console.log(isValidHexColor('#FF5733')); // true
 console.log(isValidHexColor('#F57')); // true (short form)
@@ -815,7 +815,7 @@ console.log(isValidHexColor('red')); // false
 Validates if a number is a valid QR code size (50-1000 pixels).
 
 ```typescript
-import { isValidQRSize } from 'qrcode-studio';
+import { isValidQRSize } from 'code-craft-studio';
 
 console.log(isValidQRSize(300)); // true
 console.log(isValidQRSize(25)); // false (too small)
@@ -829,7 +829,7 @@ console.log(isValidQRSize(2000)); // false (too large)
 Validates QR data based on the specified type. Throws `QRValidationError` if validation fails.
 
 ```typescript
-import { validateQRData, QRType, QRValidationError } from 'qrcode-studio';
+import { validateQRData, QRType, QRValidationError } from 'code-craft-studio';
 
 try {
   validateQRData(QRType.WEBSITE, { url: 'https://example.com' });
@@ -849,7 +849,7 @@ try {
 Provides form field configurations for each QR type.
 
 ```typescript
-import { qrFormFields, QRType } from 'qrcode-studio';
+import { qrFormFields, QRType } from 'code-craft-studio';
 
 const websiteFields = qrFormFields[QRType.WEBSITE];
 console.log(websiteFields);
@@ -861,7 +861,7 @@ console.log(websiteFields);
 Provides metadata about each QR type.
 
 ```typescript
-import { qrTypeInfo, QRType } from 'qrcode-studio';
+import { qrTypeInfo, QRType } from 'code-craft-studio';
 
 const websiteInfo = qrTypeInfo[QRType.WEBSITE];
 console.log(websiteInfo);
@@ -870,7 +870,7 @@ console.log(websiteInfo);
 
 ## Barcode Support
 
-QRCode Studio provides comprehensive barcode scanning and generation capabilities alongside QR codes.
+Code Craft Studio provides comprehensive barcode scanning and generation capabilities alongside QR codes.
 
 ### Barcode Methods
 
@@ -951,7 +951,7 @@ console.log('Supported formats:', formats);
 React component for barcode scanning.
 
 ```tsx
-import { BarcodeScanner } from 'qrcode-studio';
+import { BarcodeScanner } from 'code-craft-studio';
 
 <BarcodeScanner
   formats={['EAN_13', 'CODE_128', 'QR_CODE']}
@@ -1023,7 +1023,7 @@ interface BarcodeResult {
 Validates barcode data based on format requirements.
 
 ```typescript
-import { validateBarcodeData } from 'qrcode-studio';
+import { validateBarcodeData } from 'code-craft-studio';
 
 // Validate EAN-13 (must be 13 digits with valid checksum)
 console.log(validateBarcodeData('EAN_13', '5901234123457')); // true
@@ -1038,7 +1038,7 @@ console.log(validateBarcodeData('CODE_128', 'ABC-123')); // true
 Get validation constraints for a barcode format.
 
 ```typescript
-import { getBarcodeConstraints } from 'qrcode-studio';
+import { getBarcodeConstraints } from 'code-craft-studio';
 
 const constraints = getBarcodeConstraints('EAN_13');
 console.log(constraints);
@@ -1054,7 +1054,7 @@ console.log(constraints);
 #### Product Scanner
 ```tsx
 import React, { useState } from 'react';
-import { BarcodeScanner, validateBarcodeData } from 'qrcode-studio';
+import { BarcodeScanner, validateBarcodeData } from 'code-craft-studio';
 
 function ProductScanner() {
   const [product, setProduct] = useState(null);
@@ -1087,7 +1087,7 @@ function ProductScanner() {
 
 #### Inventory Management
 ```typescript
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 
 async function generateInventoryLabel(item) {
   // Generate Code 128 barcode for inventory
@@ -1120,7 +1120,7 @@ async function scanInventoryItem() {
 #### Ticket Validation
 ```tsx
 import React from 'react';
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 
 function TicketValidator() {
   const generateTicket = async (eventId, userId) => {

@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2024-12-30
 
 ### Added
-- Initial release of QRCode Studio
+- Initial release of Code Craft Studio
 - QR code scanning functionality with native camera support
 - QR code generation for 17+ different types
 - React components: QRScanner, QRGenerator, and QRStudio

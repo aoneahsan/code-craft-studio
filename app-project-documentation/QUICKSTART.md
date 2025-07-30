@@ -1,8 +1,11 @@
-# QRCode Studio App - Quick Start Guide
+# Code Craft Studio App - Quick Start Guide
 
 ## 🚀 Get Started in 5 Minutes
 
+Complete QR code and barcode scanning/generation solution for Capacitor apps.
+
 ### Prerequisites
+
 - Node.js 16+ installed
 - Yarn or npm
 - iOS: Xcode 14+ (for iOS development)
@@ -16,30 +19,31 @@ npx create-react-app qrcode-app --template typescript
 cd qrcode-app
 
 # Install dependencies
-yarn add @capacitor/core @capacitor/cli qrcode-studio react-router-dom zustand
+yarn add @capacitor/core @capacitor/cli code-craft-studio react-router-dom zustand
 yarn add -D @capacitor/ios @capacitor/android tailwindcss
 
 # Initialize Capacitor
 npx cap init "QRCode App" com.yourcompany.qrcodeapp --web-dir build
 
 # Run QRCode Studio setup
-npx qrcode-studio-setup
+npx code-craft-studio-setup
 ```
 
 ## Step 2: Basic App Setup
 
 ### 2.1 Create App.tsx
+
 ```typescript
 // src/App.tsx
 import React from 'react';
-import { QRStudio } from 'qrcode-studio';
-import 'qrcode-studio/src/styles/qrcode-studio.css';
+import { QRStudio } from 'code-craft-studio';
+import 'code-craft-studio/src/styles/code-craft-studio.css';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <h1>QRCode Studio</h1>
+      <h1>Code Craft Studio</h1>
       <QRStudio
         config={{
           allowedTypes: ['website', 'wifi', 'text', 'vcard'],
@@ -63,6 +67,7 @@ export default App;
 ```
 
 ### 2.2 Add Basic Styles
+
 ```css
 /* src/App.css */
 .App {
@@ -98,18 +103,21 @@ npx cap sync
 ## Step 4: Run Your App
 
 ### Web
+
 ```bash
 yarn start
 # Opens http://localhost:3000
 ```
 
 ### iOS
+
 ```bash
 npx cap open ios
 # Click Run in Xcode
 ```
 
 ### Android
+
 ```bash
 npx cap open android
 # Click Run in Android Studio
@@ -118,8 +126,9 @@ npx cap open android
 ## 🎯 Quick Examples
 
 ### Example 1: Simple QR Scanner
+
 ```typescript
-import { QRScanner } from 'qrcode-studio';
+import { QRScanner } from 'code-craft-studio';
 
 function ScannerExample() {
   return (
@@ -133,8 +142,9 @@ function ScannerExample() {
 ```
 
 ### Example 2: QR Generator with Custom Design
+
 ```typescript
-import { QRGenerator } from 'qrcode-studio';
+import { QRGenerator } from 'code-craft-studio';
 
 function GeneratorExample() {
   return (
@@ -158,43 +168,95 @@ function GeneratorExample() {
 }
 ```
 
-### Example 3: Complete Page with Navigation
+### Example 3: Barcode Scanner
+
+```typescript
+import { BarcodeScanner } from 'code-craft-studio';
+
+function BarcodeScannerExample() {
+  return (
+    <BarcodeScanner
+      formats={['EAN_13', 'UPC_A', 'CODE_128']}
+      onScan={(result) => {
+        alert(`Scanned ${result.format}: ${result.rawValue}`);
+      }}
+    />
+  );
+}
+```
+
+### Example 4: Generate Product Barcode
+
+```typescript
+import { QRCodeStudio } from 'code-craft-studio';
+
+async function generateProductBarcode() {
+  const barcode = await QRCodeStudio.generateBarcode({
+    format: 'EAN_13',
+    data: '5901234123457',
+    width: 300,
+    height: 100,
+    displayText: true,
+  });
+
+  // Display the barcode
+  document.getElementById('barcode').src = barcode.dataUrl;
+}
+```
+
+### Example 5: Complete Page with QR & Barcode
+
 ```typescript
 import React, { useState } from 'react';
-import { QRScanner, QRGenerator } from 'qrcode-studio';
+import { QRScanner, QRGenerator, BarcodeScanner } from 'code-craft-studio';
 
-function QRApp() {
-  const [tab, setTab] = useState<'scan' | 'generate'>('scan');
+function CompleteApp() {
+  const [mode, setMode] = useState<'qr-scan' | 'qr-gen' | 'barcode'>('qr-scan');
 
   return (
-    <div className="qr-app">
+    <div className="app">
       <div className="tabs">
-        <button 
-          className={tab === 'scan' ? 'active' : ''}
-          onClick={() => setTab('scan')}
+        <button
+          className={mode === 'qr-scan' ? 'active' : ''}
+          onClick={() => setMode('qr-scan')}
         >
-          Scan
+          QR Scan
         </button>
-        <button 
-          className={tab === 'generate' ? 'active' : ''}
-          onClick={() => setTab('generate')}
+        <button
+          className={mode === 'qr-gen' ? 'active' : ''}
+          onClick={() => setMode('qr-gen')}
         >
-          Generate
+          QR Generate
+        </button>
+        <button
+          className={mode === 'barcode' ? 'active' : ''}
+          onClick={() => setMode('barcode')}
+        >
+          Barcode Scan
         </button>
       </div>
 
       <div className="content">
-        {tab === 'scan' ? (
+        {mode === 'qr-scan' && (
           <QRScanner
             onScan={(result) => {
-              console.log('Scanned:', result);
+              console.log('QR Scanned:', result);
             }}
           />
-        ) : (
+        )}
+        {mode === 'qr-gen' && (
           <QRGenerator
             type="text"
-            data={{ text: 'Hello QR World!' }}
+            data={{ text: 'Hello World!' }}
             size={250}
+          />
+        )}
+        {mode === 'barcode' && (
+          <BarcodeScanner
+            formats={['EAN_13', 'UPC_A', 'CODE_128', 'QR_CODE']}
+            onScan={(result) => {
+              console.log('Barcode:', result);
+            }}
           />
         )}
       </div>
@@ -206,16 +268,20 @@ function QRApp() {
 ## 📱 Platform-Specific Setup
 
 ### iOS Requirements
+
 1. Open `ios/App/App/Info.plist`
 2. Add camera permission:
+
 ```xml
 <key>NSCameraUsageDescription</key>
 <string>This app needs camera access to scan QR codes</string>
 ```
 
 ### Android Requirements
+
 1. Open `android/app/src/main/AndroidManifest.xml`
 2. Add camera permission:
+
 ```xml
 <uses-permission android:name="android.permission.CAMERA" />
 ```
@@ -223,20 +289,25 @@ function QRApp() {
 ## 🛠 Common Issues & Solutions
 
 ### Issue: Camera not working on iOS
+
 **Solution**: Make sure you've added camera permissions and run `npx cap sync ios`
 
 ### Issue: QR Scanner shows black screen
+
 **Solution**: Check that camera permissions are granted in device settings
 
 ### Issue: Build fails on Android
+
 **Solution**: Ensure Android Studio is updated and Gradle sync is complete
 
 ### Issue: Styles not loading
-**Solution**: Import the CSS file: `import 'qrcode-studio/src/styles/qrcode-studio.css'`
+
+**Solution**: Import the CSS file: `import 'code-craft-studio/src/styles/code-craft-studio.css'`
 
 ## 📚 Next Steps
 
 ### 1. Add State Management
+
 ```typescript
 // store/qrStore.ts
 import { create } from 'zustand';
@@ -248,13 +319,15 @@ interface QRStore {
 
 export const useQRStore = create<QRStore>((set) => ({
   history: [],
-  addToHistory: (item) => set((state) => ({ 
-    history: [...state.history, item] 
-  })),
+  addToHistory: (item) =>
+    set((state) => ({
+      history: [...state.history, item],
+    })),
 }));
 ```
 
 ### 2. Add Routing
+
 ```typescript
 // App.tsx with routing
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -273,6 +346,7 @@ function App() {
 ```
 
 ### 3. Add Custom Styling
+
 ```bash
 # Install Tailwind CSS
 yarn add -D tailwindcss postcss autoprefixer
@@ -287,9 +361,10 @@ module.exports = {
 ```
 
 ### 4. Add Analytics
+
 ```typescript
 // Track QR code events
-import { QRCodeStudio } from 'qrcode-studio';
+import { QRCodeStudio } from 'code-craft-studio';
 
 // When QR is scanned
 const handleScan = async (result) => {
@@ -329,6 +404,6 @@ You now have a working QR code app! Here's what you can do next:
 ## 🤝 Need Help?
 
 - Check the [documentation](../README.md)
-- Look at [example code](../qrcode-studio-examples.tsx)
-- Create an [issue](https://github.com/aoneahsan/qrcode-studio/issues)
+- Look at [example code](../code-craft-studio-examples.tsx)
+- Create an [issue](https://github.com/aoneahsan/code-craft-studio/issues)
 - Email: aoneahsan@gmail.com

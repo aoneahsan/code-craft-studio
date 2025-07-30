@@ -1,13 +1,13 @@
 {
-  "name": "qrcode-studio",
-  "version": "1.1.0",
-  "description": "A comprehensive Capacitor plugin for QR code scanning and generation with 17+ data types, customizable designs, landing pages, and analytics. Build feature-rich QR code experiences for web, iOS, and Android.",
+  "name": "code-craft-studio",
+  "version": "1.0.0",
+  "description": "A comprehensive Capacitor plugin for QR code and barcode scanning/generation. Supports 22+ QR data types and 14+ barcode formats (EAN, UPC, Code 128, etc.), with customizable designs, analytics, and React components. Works seamlessly across web, iOS, and Android.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "unpkg": "dist/plugin.js",
   "bin": {
-    "qrcode-studio-setup": "./scripts/setup.js"
+    "code-craft-studio-setup": "./scripts/setup.js"
   },
   "files": [
     "android/src/main/",
@@ -17,7 +17,7 @@
     "android/proguard-rules.pro",
     "dist/",
     "ios/Plugin/",
-    "QrcodeStudio.podspec",
+    "CodeCraftStudio.podspec",
     "scripts/",
     "src/components/**/*.css",
     "src/styles/"
@@ -30,10 +30,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aoneahsan/qrcode-studio.git"
+    "url": "git+https://github.com/aoneahsan/code-craft-studio.git"
   },
   "bugs": {
-    "url": "https://github.com/aoneahsan/qrcode-studio/issues"
+    "url": "https://github.com/aoneahsan/code-craft-studio/issues"
   },
   "keywords": [
     "capacitor",
@@ -41,13 +41,25 @@
     "qr-scanner",
     "qr-generator",
     "barcode",
+    "barcode-scanner",
+    "barcode-generator",
+    "ean13",
+    "ean8",
+    "upc",
+    "code128",
+    "code39",
+    "datamatrix",
+    "pdf417",
+    "aztec",
     "react",
     "ios",
     "android",
     "web",
     "qr-code-studio",
     "qr-analytics",
-    "qr-customization"
+    "qr-customization",
+    "zxing",
+    "ml-kit"
   ],
   "scripts": {
     "build": "yarn clean && yarn tsc && rollup -c rollup.config.js",
@@ -83,38 +95,38 @@
     "@capacitor/core": "^7.4.2",
     "@capacitor/ios": "^7.4.2",
     "@cypress/react": "^9.0.1",
-    "@cypress/webpack-dev-server": "^4.1.0",
+    "@cypress/webpack-dev-server": "^4.1.1",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^24.0.15",
+    "@types/node": "^24.1.0",
     "@types/qrcode": "^1.5.5",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@typescript-eslint/eslint-plugin": "^8.37.0",
-    "@typescript-eslint/parser": "^8.37.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "@vitejs/plugin-react": "^4.7.0",
     "@vitest/coverage-v8": "^3.2.4",
-    "cypress": "^14.5.2",
-    "eslint": "^9.31.0",
+    "cypress": "^14.5.3",
+    "eslint": "^9.32.0",
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "rimraf": "^6.0.1",
-    "rollup": "^4.45.1",
+    "rollup": "^4.46.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@capacitor/core": "^7.0.0",
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
+    "@capacitor/core": "^7.4.2",
+    "react": ">=19.1.1",
+    "react-dom": ">=19.1.1"
   },
   "capacitor": {
     "ios": {
@@ -125,6 +137,6 @@
     }
   },
   "release": {
-    "npm": "https://www.npmjs.com/package/qrcode-studio"
+    "npm": "https://www.npmjs.com/package/code-craft-studio"
   }
 }

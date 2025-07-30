@@ -4,7 +4,7 @@
 ## Last Updated: July 12, 2025
 
 ## Version Summary
-Initial release of QRCode Studio - A comprehensive Capacitor plugin for QR code scanning and generation.
+Initial release of Code Craft Studio - A comprehensive Capacitor plugin for QR code scanning and generation.
 
 ## Features Included
 
@@ -49,7 +49,7 @@ Initial release of QRCode Studio - A comprehensive Capacitor plugin for QR code 
 - ArrayFieldEditor - Complex form field handling
 
 ### Developer Tools
-- Setup script (npx qrcode-studio-setup)
+- Setup script (npx code-craft-studio-setup)
 - Comprehensive documentation
 - Example implementations
 - TypeScript definitions

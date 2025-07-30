@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-// Custom commands for QRCode Studio testing
+// Custom commands for Code Craft Studio testing
 
 Cypress.Commands.add('scanQRCode', (content: string) => {
   // Mock the QR scanner result
