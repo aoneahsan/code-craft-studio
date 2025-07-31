@@ -1,0 +1,80 @@
+# Code Craft Studio CODEOWNERS
+# This file defines who should review pull requests for different parts of the codebase
+# When someone opens a pull request that modifies matched files, the designated owners
+# will be automatically requested for review
+
+# Default owner for everything in the repo
+# Replace @your-github-username with your actual GitHub username
+* @your-github-username
+
+# Documentation files
+/docs/ @your-github-username
+/README.md @your-github-username
+/CLAUDE.md @your-github-username
+/LICENSE @your-github-username
+/CHANGELOG.md @your-github-username
+*.md @your-github-username
+
+# Source code - Core plugin functionality
+/src/ @your-github-username
+/src/index.ts @your-github-username
+/src/definitions.ts @your-github-username
+/src/web.ts @your-github-username
+
+# React components
+/src/components/ @your-github-username
+/src/components/QRScanner/ @your-github-username
+/src/components/QRGenerator/ @your-github-username
+/src/components/BarcodeScanner/ @your-github-username
+/src/components/BarcodeGenerator/ @your-github-username
+/src/components/QRStudio/ @your-github-username
+
+# Utilities and helpers
+/src/utils/ @your-github-username
+/src/validators/ @your-github-username
+/src/generators/ @your-github-username
+
+# Styles
+/src/styles/ @your-github-username
+*.css @your-github-username
+
+# Native platform implementations
+# Add platform experts as co-owners when available
+/android/ @your-github-username
+/ios/ @your-github-username
+
+# Build and configuration files
+/package.json @your-github-username
+/tsconfig.json @your-github-username
+/rollup.config.js @your-github-username
+/.eslintrc.json @your-github-username
+/.prettierrc @your-github-username
+/capacitor.config.json @your-github-username
+
+# CI/CD and GitHub configuration
+/.github/ @your-github-username
+/.github/workflows/ @your-github-username
+/.github/ISSUE_TEMPLATE/ @your-github-username
+/.github/PULL_REQUEST_TEMPLATE.md @your-github-username
+
+# Security-sensitive files - require careful review
+/SECURITY.md @your-github-username
+/.env.example @your-github-username
+/.gitignore @your-github-username
+/.npmignore @your-github-username
+
+# Scripts and tools
+/scripts/ @your-github-username
+/setup.js @your-github-username
+
+# Test files (when added)
+/tests/ @your-github-username
+*.test.ts @your-github-username
+*.spec.ts @your-github-username
+
+# Dependencies - careful review needed
+/package-lock.json @your-github-username
+/yarn.lock @your-github-username
+
+# Project planning and development docs
+/project-development-plan/ @your-github-username

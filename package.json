@@ -1,6 +1,6 @@
 {
   "name": "code-craft-studio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A comprehensive Capacitor plugin for QR code and barcode scanning/generation. Supports 22+ QR data types and 14+ barcode formats (EAN, UPC, Code 128, etc.), with customizable designs, analytics, and React components. Works seamlessly across web, iOS, and Android.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
