@@ -83,7 +83,17 @@
 
 ## 📦 Installation
 
-### Quick Setup (Recommended)
+### For React Apps (No Capacitor Required)
+
+```bash
+npm install code-craft-studio
+# or
+yarn add code-craft-studio
+```
+
+That's it! The package works out of the box in any React app.
+
+### For Capacitor Apps
 
 ```bash
 npm install code-craft-studio
@@ -92,7 +102,7 @@ npx code-craft-studio-setup
 
 The setup script will:
 
-- Install dependencies
+- Install optional Capacitor dependencies
 - Configure iOS and Android permissions
 - Sync Capacitor
 - Create example files
@@ -144,6 +154,52 @@ Add to your main CSS file:
 
 ### Basic Usage
 
+#### Provider-less Hook API (Recommended)
+
+```tsx
+import { useCodeCraftStudio } from 'code-craft-studio';
+import { QRType } from 'code-craft-studio';
+
+// Works anywhere in your app - no providers needed!
+function MyComponent() {
+  const { 
+    scanQRCode, 
+    generateQRCode, 
+    generateBarcode,
+    isReady, 
+    error 
+  } = useCodeCraftStudio();
+
+  const handleScan = async () => {
+    try {
+      const result = await scanQRCode();
+      console.log('Scanned:', result.content);
+    } catch (err) {
+      console.error('Scan failed:', err);
+    }
+  };
+
+  const handleGenerate = async () => {
+    const result = await generateQRCode({
+      type: QRType.WEBSITE,
+      url: 'https://example.com'
+    });
+    console.log('Generated:', result.dataUrl);
+  };
+
+  if (!isReady) return <div>Loading...</div>;
+  
+  return (
+    <div>
+      <button onClick={handleScan}>Scan QR Code</button>
+      <button onClick={handleGenerate}>Generate QR Code</button>
+    </div>
+  );
+}
+```
+
+#### React Components
+
 ```tsx
 import {
   QRScanner,
@@ -170,18 +226,6 @@ function Generator() {
       type='website'
       data={{ url: 'https://example.com' }}
       size={300}
-    />
-  );
-}
-
-// Barcode Scanner (Product Scanner)
-function ProductScanner() {
-  return (
-    <BarcodeScanner
-      formats={['EAN_13', 'UPC_A', 'CODE_128']}
-      onScan={(result) => {
-        console.log(`Scanned ${result.format}: ${result.rawValue}`);
-      }}
     />
   );
 }

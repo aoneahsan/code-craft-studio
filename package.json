@@ -1,7 +1,7 @@
 {
   "name": "code-craft-studio",
-  "version": "1.1.0",
-  "description": "A comprehensive Capacitor plugin for QR code and barcode scanning/generation. Supports 22+ QR data types and 14+ barcode formats (EAN, UPC, Code 128, etc.), with customizable designs, analytics, and React components. Works seamlessly across web, iOS, and Android.",
+  "version": "1.2.0",
+  "description": "A comprehensive QR code and barcode scanning/generation library for React. Works with or without Capacitor. Supports 22+ QR data types and 14+ barcode formats (EAN, UPC, Code 128, etc.), with customizable designs, analytics, and React components. Provider-less architecture for easy integration.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -83,7 +83,7 @@
     "postinstall": "node scripts/postinstall.js || echo 'Postinstall script not found, skipping...'"
   },
   "dependencies": {
-    "@capacitor/preferences": "^7.0.1",
+    "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
     "jsbarcode": "^3.12.1",
     "qr-scanner": "^1.4.2",
@@ -120,13 +120,28 @@
     "react-dom": "^19.1.1",
     "rimraf": "^6.0.1",
     "rollup": "^4.46.2",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@capacitor/core": "^7.4.2",
     "react": ">=19.1.1",
     "react-dom": ">=19.1.1"
+  },
+  "optionalDependencies": {
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/preferences": "^7.0.1",
+    "@capacitor/filesystem": "^7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@capacitor/core": {
+      "optional": true
+    },
+    "@capacitor/preferences": {
+      "optional": true
+    },
+    "@capacitor/filesystem": {
+      "optional": true
+    }
   },
   "capacitor": {
     "ios": {

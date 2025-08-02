@@ -1462,3 +1462,195 @@ export interface ProductInfo {
    */
   metadata?: Record<string, any>;
 }
+
+/**
+ * QR Code Data type combining all possible QR data types
+ */
+export type QRCodeData = 
+  | { type: 'website' } & WebsiteData
+  | { type: 'pdf' } & PDFData
+  | { type: 'images' } & ImagesData
+  | { type: 'video' } & VideoData
+  | { type: 'wifi' } & WiFiData
+  | { type: 'menu' } & MenuData
+  | { type: 'business' } & BusinessData
+  | { type: 'vcard' } & VCardData
+  | { type: 'mp3' | 'audio' } & MP3Data
+  | { type: 'app' | 'apps' } & AppsData
+  | { type: 'links_list' } & LinksListData
+  | { type: 'coupon' } & CouponData
+  | { type: 'facebook' } & FacebookData
+  | { type: 'instagram' } & InstagramData
+  | { type: 'social_media' } & SocialMediaData
+  | { type: 'whatsapp' } & WhatsAppData
+  | { type: 'text' } & TextData
+  | { type: 'email' } & EmailData
+  | { type: 'sms' } & SMSData
+  | { type: 'phone' } & PhoneData
+  | { type: 'location' } & LocationData
+  | { type: 'event' } & EventData;
+
+/**
+ * Options for QR code generation
+ */
+export interface QRCodeOptions {
+  /**
+   * Width/height of the QR code in pixels
+   */
+  width?: number;
+  
+  /**
+   * Error correction level
+   */
+  errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
+  
+  /**
+   * Margin around the QR code
+   */
+  margin?: number;
+  
+  /**
+   * QR code color
+   */
+  color?: string;
+  
+  /**
+   * Background color
+   */
+  backgroundColor?: string;
+  
+  /**
+   * Logo URL to embed in QR code
+   */
+  logo?: string;
+  
+  /**
+   * Logo size as percentage of QR code size
+   */
+  logoSize?: number;
+  
+  /**
+   * Image quality (0-1)
+   */
+  quality?: number;
+}
+
+/**
+ * Options for barcode generation
+ */
+export interface BarcodeOptions {
+  /**
+   * Width of each bar
+   */
+  width?: number;
+  
+  /**
+   * Height of the barcode
+   */
+  height?: number;
+  
+  /**
+   * Whether to display the text below barcode
+   */
+  showText?: boolean;
+  
+  /**
+   * Font size for the text
+   */
+  fontSize?: number;
+  
+  /**
+   * Margin between barcode and text
+   */
+  textMargin?: number;
+  
+  /**
+   * Margin around the barcode
+   */
+  margin?: number;
+  
+  /**
+   * Barcode color
+   */
+  color?: string;
+  
+  /**
+   * Background color
+   */
+  backgroundColor?: string;
+}
+
+/**
+ * Analytics data structure
+ */
+export interface AnalyticsData {
+  /**
+   * Total number of scans
+   */
+  totalScans: number;
+  
+  /**
+   * Total number of generations
+   */
+  totalGenerations: number;
+  
+  /**
+   * Scans by type
+   */
+  scansByType: Record<string, number>;
+  
+  /**
+   * Generations by type
+   */
+  generationsByType: Record<string, number>;
+  
+  /**
+   * Exports by format
+   */
+  exportsByFormat: Record<string, number>;
+  
+  /**
+   * Last updated timestamp
+   */
+  lastUpdated: string;
+}
+
+/**
+ * Validation result
+ */
+export interface ValidationResult {
+  /**
+   * Whether the data is valid
+   */
+  isValid: boolean;
+  
+  /**
+   * Validation errors
+   */
+  errors: string[];
+  
+  /**
+   * Validation warnings
+   */
+  warnings: string[];
+}
+
+/**
+ * Export options
+ */
+export interface ExportOptions {
+  /**
+   * Export format
+   */
+  format: ExportFormat;
+  
+  /**
+   * File name (without extension)
+   */
+  fileName?: string;
+  
+  /**
+   * Quality for image formats (0-1)
+   */
+  quality?: number;
+}
