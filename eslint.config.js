@@ -107,6 +107,7 @@ module.exports = [
       'android/',
       'ios/',
       'example/',
+      'examples/',
       'rollup.config.js',
       'eslint.config.js',
       'app-project-documentation/',
