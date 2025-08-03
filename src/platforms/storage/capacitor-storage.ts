@@ -14,7 +14,7 @@ export class CapacitorStorageAdapter implements StorageAdapter {
     try {
       const { Preferences } = await import('@capacitor/preferences');
       this.preferences = Preferences;
-    } catch (error) {
+    } catch (_error) {
       logger.warn('CapacitorStorageAdapter: @capacitor/preferences not available, falling back to localStorage');
     }
   }

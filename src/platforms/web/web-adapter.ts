@@ -306,7 +306,7 @@ export class WebPlatformAdapter implements PlatformAdapter {
     try {
       const cameraResult = await navigator.permissions.query({ name: 'camera' as PermissionName });
       permissions.camera = cameraResult.state;
-    } catch (error) {
+    } catch (_error) {
       permissions.camera = 'prompt';
     }
     
@@ -322,7 +322,7 @@ export class WebPlatformAdapter implements PlatformAdapter {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       stream.getTracks().forEach(track => track.stop());
       permissions.camera = 'granted';
-    } catch (error) {
+    } catch (_error) {
       permissions.camera = 'denied';
     }
     
