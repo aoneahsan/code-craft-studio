@@ -16,6 +16,7 @@ import type {
 } from '../../definitions';
 import { CapacitorStorageAdapter } from '../storage/capacitor-storage';
 import { WebPlatformAdapter } from '../web/web-adapter';
+import { logger } from '../../utils/logger';
 
 export class CapacitorPlatformAdapter implements PlatformAdapter {
   readonly name = 'capacitor';
@@ -66,7 +67,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
         });
       }
     } catch (error) {
-      console.warn('CapacitorPlatformAdapter: Failed to load Capacitor plugin, using web fallback', error);
+      logger.warn('CapacitorPlatformAdapter: Failed to load Capacitor plugin, using web fallback', error);
     }
   }
 
@@ -75,7 +76,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.scanQRCode(options);
       } catch (error) {
-        console.warn('Native QR scanning failed, falling back to web', error);
+        logger.warn('Native QR scanning failed, falling back to web', error);
       }
     }
     return this.webAdapter.scanQRCode(options);
@@ -86,7 +87,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.generateQRCode({ data, options });
       } catch (error) {
-        console.warn('Native QR generation failed, falling back to web', error);
+        logger.warn('Native QR generation failed, falling back to web', error);
       }
     }
     return this.webAdapter.generateQRCode(data, options);
@@ -97,7 +98,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.validateQRData({ data });
       } catch (error) {
-        console.warn('Native validation failed, falling back to web', error);
+        logger.warn('Native validation failed, falling back to web', error);
       }
     }
     return this.webAdapter.validateQRData(data);
@@ -108,7 +109,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.scanBarcode(options);
       } catch (error) {
-        console.warn('Native barcode scanning failed, falling back to web', error);
+        logger.warn('Native barcode scanning failed, falling back to web', error);
       }
     }
     return this.webAdapter.scanBarcode(options);
@@ -119,7 +120,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.generateBarcode({ data, format, options });
       } catch (error) {
-        console.warn('Native barcode generation failed, falling back to web', error);
+        logger.warn('Native barcode generation failed, falling back to web', error);
       }
     }
     return this.webAdapter.generateBarcode(data, format, options);
@@ -130,7 +131,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.validateBarcode({ data, format });
       } catch (error) {
-        console.warn('Native barcode validation failed, falling back to web', error);
+        logger.warn('Native barcode validation failed, falling back to web', error);
       }
     }
     return this.webAdapter.validateBarcode(data, format);
@@ -141,7 +142,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.saveToHistory({ item });
       } catch (error) {
-        console.warn('Native history save failed, falling back to web', error);
+        logger.warn('Native history save failed, falling back to web', error);
       }
     }
     return this.webAdapter.saveToHistory(item);
@@ -153,7 +154,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
         const result = await this.plugin.getHistory(options);
         return result.items || [];
       } catch (error) {
-        console.warn('Native history retrieval failed, falling back to web', error);
+        logger.warn('Native history retrieval failed, falling back to web', error);
       }
     }
     return this.webAdapter.getHistory(options);
@@ -164,7 +165,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.clearHistory();
       } catch (error) {
-        console.warn('Native history clear failed, falling back to web', error);
+        logger.warn('Native history clear failed, falling back to web', error);
       }
     }
     return this.webAdapter.clearHistory();
@@ -175,7 +176,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.getAnalytics();
       } catch (error) {
-        console.warn('Native analytics failed, falling back to web', error);
+        logger.warn('Native analytics failed, falling back to web', error);
       }
     }
     return this.webAdapter.getAnalytics();
@@ -203,7 +204,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
         
         return { filePath: result.uri };
       } catch (error) {
-        console.warn('Native export failed, falling back to web', error);
+        logger.warn('Native export failed, falling back to web', error);
       }
     }
     return this.webAdapter.exportCode(dataUrl, options);
@@ -214,7 +215,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.checkPermissions();
       } catch (error) {
-        console.warn('Native permission check failed, falling back to web', error);
+        logger.warn('Native permission check failed, falling back to web', error);
       }
     }
     return this.webAdapter.checkPermissions();
@@ -225,7 +226,7 @@ export class CapacitorPlatformAdapter implements PlatformAdapter {
       try {
         return await this.plugin.requestPermissions();
       } catch (error) {
-        console.warn('Native permission request failed, falling back to web', error);
+        logger.warn('Native permission request failed, falling back to web', error);
       }
     }
     return this.webAdapter.requestPermissions();

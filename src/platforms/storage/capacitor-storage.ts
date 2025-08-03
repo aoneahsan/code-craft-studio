@@ -1,4 +1,5 @@
 import type { StorageAdapter } from '../types';
+import { logger } from '../../utils/logger';
 
 export class CapacitorStorageAdapter implements StorageAdapter {
   private preferences: any;
@@ -14,7 +15,7 @@ export class CapacitorStorageAdapter implements StorageAdapter {
       const { Preferences } = await import('@capacitor/preferences');
       this.preferences = Preferences;
     } catch (error) {
-      console.warn('CapacitorStorageAdapter: @capacitor/preferences not available, falling back to localStorage');
+      logger.warn('CapacitorStorageAdapter: @capacitor/preferences not available, falling back to localStorage');
     }
   }
 
@@ -27,7 +28,7 @@ export class CapacitorStorageAdapter implements StorageAdapter {
       const result = await this.preferences.get({ key: this.prefix + key });
       return result.value || null;
     } catch (error) {
-      console.error('CapacitorStorageAdapter: Error getting item', error);
+      logger.error('CapacitorStorageAdapter: Error getting item', error);
       return null;
     }
   }
@@ -41,7 +42,7 @@ export class CapacitorStorageAdapter implements StorageAdapter {
     try {
       await this.preferences.set({ key: this.prefix + key, value });
     } catch (error) {
-      console.error('CapacitorStorageAdapter: Error setting item', error);
+      logger.error('CapacitorStorageAdapter: Error setting item', error);
       throw error;
     }
   }
@@ -55,7 +56,7 @@ export class CapacitorStorageAdapter implements StorageAdapter {
     try {
       await this.preferences.remove({ key: this.prefix + key });
     } catch (error) {
-      console.error('CapacitorStorageAdapter: Error removing item', error);
+      logger.error('CapacitorStorageAdapter: Error removing item', error);
       throw error;
     }
   }
@@ -78,7 +79,7 @@ export class CapacitorStorageAdapter implements StorageAdapter {
       const keysToRemove = keys.filter((key: string) => key.startsWith(this.prefix));
       await Promise.all(keysToRemove.map((key: string) => this.preferences.remove({ key })));
     } catch (error) {
-      console.error('CapacitorStorageAdapter: Error clearing storage', error);
+      logger.error('CapacitorStorageAdapter: Error clearing storage', error);
       throw error;
     }
   }

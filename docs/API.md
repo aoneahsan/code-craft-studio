@@ -2,12 +2,120 @@
 
 ## Table of Contents
 
+- [React Hook API (Provider-less)](#react-hook-api-provider-less)
 - [Plugin API](#plugin-api)
 - [React Components](#react-components)
 - [Type Definitions](#type-definitions)
 - [Barcode Support](#barcode-support)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
+
+## React Hook API (Provider-less)
+
+### useCodeCraftStudio
+
+A provider-less React hook that gives you access to all Code Craft Studio functionality. Works anywhere in your app without requiring context providers.
+
+#### Import
+
+```typescript
+import { useCodeCraftStudio } from 'code-craft-studio';
+```
+
+#### Usage
+
+```typescript
+function MyComponent() {
+  const {
+    // Methods
+    scanQRCode,
+    generateQRCode,
+    scanBarcode,
+    generateBarcode,
+    checkPermissions,
+    requestPermissions,
+    saveToHistory,
+    getHistory,
+    clearHistory,
+    getAnalytics,
+    exportCode,
+    validateQRData,
+    validateBarcode,
+    
+    // State
+    isReady,
+    error,
+    platform
+  } = useCodeCraftStudio();
+}
+```
+
+#### Return Values
+
+##### Methods
+
+- `scanQRCode(options?)` - Scan a QR code using camera
+- `generateQRCode(data, options?)` - Generate a QR code
+- `scanBarcode(options?)` - Scan a barcode
+- `generateBarcode(data, format, options?)` - Generate a barcode
+- `checkPermissions()` - Check camera permissions
+- `requestPermissions()` - Request camera permissions
+- `saveToHistory(item)` - Save scan/generation to history
+- `getHistory(options?)` - Retrieve history items
+- `clearHistory()` - Clear all history
+- `getAnalytics()` - Get usage analytics
+- `exportCode(dataUrl, options)` - Export code to file
+- `validateQRData(data)` - Validate QR code data
+- `validateBarcode(data, format)` - Validate barcode data
+
+##### State
+
+- `isReady: boolean` - Whether the platform is initialized
+- `error: Error | null` - Any initialization errors
+- `platform: PlatformAdapter | null` - Current platform adapter with capabilities
+
+#### Example
+
+```typescript
+import { useCodeCraftStudio } from 'code-craft-studio';
+import { QRType } from 'code-craft-studio';
+
+function QRApp() {
+  const { generateQRCode, scanQRCode, isReady, platform } = useCodeCraftStudio();
+  const [qrCode, setQrCode] = useState('');
+  
+  if (!isReady) {
+    return <div>Loading...</div>;
+  }
+  
+  const handleGenerate = async () => {
+    const result = await generateQRCode({
+      type: QRType.WEBSITE,
+      url: 'https://example.com'
+    });
+    setQrCode(result.dataUrl);
+  };
+  
+  const handleScan = async () => {
+    try {
+      const result = await scanQRCode();
+      alert(`Scanned: ${result.content}`);
+    } catch (error) {
+      console.error('Scan failed:', error);
+    }
+  };
+  
+  return (
+    <div>
+      <p>Platform: {platform?.name}</p>
+      <p>Native scanning: {platform?.capabilities.hasNativeScanning ? 'Yes' : 'No'}</p>
+      <button onClick={handleGenerate}>Generate QR</button>
+      <button onClick={handleScan}>Scan QR</button>
+      {qrCode && <img src={qrCode} alt="QR Code" />}
+    </div>
+  );
+}
+```
 
 ## Plugin API
 

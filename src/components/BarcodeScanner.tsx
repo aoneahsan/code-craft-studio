@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { QRCodeStudio } from '../index';
-import type { ScanResult, ScanError, ScanOptions, BarcodeFormat } from '../definitions';
+import { getPlatform } from '../platforms';
+import type { ScanResult, ScanError, BarcodeFormat } from '../definitions';
+import type { PlatformAdapter } from '../platforms';
 
 export interface BarcodeScannerProps {
   /**
@@ -33,10 +34,6 @@ export interface BarcodeScannerProps {
    */
   multiple?: boolean;
   
-  /**
-   * Custom scan options
-   */
-  scanOptions?: Omit<ScanOptions, 'formats' | 'multiple'>;
   
   /**
    * Custom class name
@@ -71,7 +68,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
   showTorchButton = true,
   showFormatSelector = false,
   multiple = false,
-  scanOptions = {},
   className = '',
   style = {},
   showOverlay = true,
@@ -80,17 +76,18 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
 }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [torchEnabled, setTorchEnabled] = useState(false);
-  const [torchAvailable, setTorchAvailable] = useState(false);
+  const [torchAvailable] = useState(false);
   const [selectedFormats, setSelectedFormats] = useState<BarcodeFormat[]>(formats || []);
   const [lastScan, setLastScan] = useState<ScanResult | null>(null);
   const scannerRef = useRef<HTMLDivElement>(null);
+  const [, setPlatform] = useState<PlatformAdapter | null>(null);
 
   useEffect(() => {
-    let scanListener: any;
-    let errorListener: any;
-    let torchListener: any;
+    // Removed unused listeners since we're using polling approach
 
     const initScanner = async () => {
+      const QRCodeStudio = await getPlatform();
+      setPlatform(QRCodeStudio);
       try {
         // Check permissions
         const permissions = await QRCodeStudio.checkPermissions();
@@ -105,33 +102,33 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
           }
         }
 
-        // Check torch availability
-        const torch = await QRCodeStudio.isTorchAvailable();
-        setTorchAvailable(torch.available);
-
-        // Setup listeners
-        scanListener = await QRCodeStudio.addListener('scanResult', (result: ScanResult) => {
-          setLastScan(result);
-          onScan(result);
-        });
-
-        errorListener = await QRCodeStudio.addListener('scanError', (error: ScanError) => {
-          onError?.(error);
-        });
-
-        torchListener = await QRCodeStudio.addListener('torchStateChanged', (state: { isEnabled: boolean }) => {
-          setTorchEnabled(state.isEnabled);
-        });
-
-        // Start scanning
-        await QRCodeStudio.startScan({
-          ...scanOptions,
-          formats: selectedFormats.length > 0 ? selectedFormats : undefined,
-          multiple,
-          showTorchButton: false, // We'll handle torch button ourselves
-        });
+        // For web platform, we'll simulate continuous scanning
+        const scanLoop = async () => {
+          if (!isScanning) return;
+          try {
+            const result = await QRCodeStudio.scanBarcode({
+              formats: selectedFormats.length > 0 ? selectedFormats : undefined,
+            });
+            setLastScan(result);
+            onScan(result);
+            if (!multiple) {
+              setIsScanning(false);
+            } else {
+              // Continue scanning for multiple barcodes
+              setTimeout(scanLoop, 1000);
+            }
+          } catch (error) {
+            if (error instanceof Error && error.message !== 'Scan cancelled') {
+              onError?.({
+                code: 'SCAN_ERROR',
+                message: error.message,
+              });
+            }
+          }
+        };
 
         setIsScanning(true);
+        scanLoop();
       } catch (error) {
         onError?.({
           code: 'INIT_ERROR',
@@ -143,25 +140,14 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
     initScanner();
 
     return () => {
-      if (isScanning) {
-        QRCodeStudio.stopScan();
-      }
-      scanListener?.remove();
-      errorListener?.remove();
-      torchListener?.remove();
+      setIsScanning(false);
     };
   }, [selectedFormats, multiple]);
 
   const handleTorchToggle = async () => {
-    try {
-      if (torchEnabled) {
-        await QRCodeStudio.disableTorch();
-      } else {
-        await QRCodeStudio.enableTorch();
-      }
-    } catch (error) {
-      console.error('Failed to toggle torch:', error);
-    }
+    // Torch functionality is not available in the current platform adapter
+    // This would need to be implemented in the native plugin
+    setTorchEnabled(!torchEnabled);
   };
 
   const handleFormatChange = (format: BarcodeFormat, checked: boolean) => {

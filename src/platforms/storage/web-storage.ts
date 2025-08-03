@@ -1,4 +1,5 @@
 import type { StorageAdapter } from '../types';
+import { logger } from '../../utils/logger';
 
 export class WebStorageAdapter implements StorageAdapter {
   private storage: Storage;
@@ -13,7 +14,7 @@ export class WebStorageAdapter implements StorageAdapter {
     try {
       return this.storage.getItem(this.prefix + key);
     } catch (error) {
-      console.error('WebStorageAdapter: Error getting item', error);
+      logger.error('WebStorageAdapter: Error getting item', error);
       return null;
     }
   }
@@ -22,7 +23,7 @@ export class WebStorageAdapter implements StorageAdapter {
     try {
       this.storage.setItem(this.prefix + key, value);
     } catch (error) {
-      console.error('WebStorageAdapter: Error setting item', error);
+      logger.error('WebStorageAdapter: Error setting item', error);
       throw error;
     }
   }
@@ -31,7 +32,7 @@ export class WebStorageAdapter implements StorageAdapter {
     try {
       this.storage.removeItem(this.prefix + key);
     } catch (error) {
-      console.error('WebStorageAdapter: Error removing item', error);
+      logger.error('WebStorageAdapter: Error removing item', error);
       throw error;
     }
   }
@@ -47,7 +48,7 @@ export class WebStorageAdapter implements StorageAdapter {
       }
       keysToRemove.forEach(key => this.storage.removeItem(key));
     } catch (error) {
-      console.error('WebStorageAdapter: Error clearing storage', error);
+      logger.error('WebStorageAdapter: Error clearing storage', error);
       throw error;
     }
   }

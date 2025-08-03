@@ -1,4 +1,5 @@
 import { QRType, QRData } from '../../definitions';
+import { logger } from '../../utils/logger';
 
 export class QRValidationError extends Error {
   constructor(message: string, public field?: string) {
@@ -17,7 +18,7 @@ export const validators: Record<QRType, (data: any) => void> = {
     if (!data.url) throw new QRValidationError('PDF URL is required', 'url');
     if (!isValidUrl(data.url)) throw new QRValidationError('Invalid URL format', 'url');
     if (!data.url.toLowerCase().endsWith('.pdf') && !data.url.includes('pdf')) {
-      console.warn('URL does not appear to be a PDF file');
+      logger.warn('URL does not appear to be a PDF file');
     }
   },
 

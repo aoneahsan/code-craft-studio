@@ -39,3 +39,6 @@ export {
 // Export form utilities
 export { qrFormFields, qrTypeInfo } from './utils/qr-forms';
 export type { FormFieldProps } from './utils/qr-forms';
+
+// Export logger for advanced users
+export { logger, type LogLevel, type LoggerConfig } from './utils/logger';

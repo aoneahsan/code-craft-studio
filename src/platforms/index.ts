@@ -1,6 +1,7 @@
 import type { PlatformAdapter } from './types';
 import { platformDetector } from './detector';
 import { WebPlatformAdapter } from './web/web-adapter';
+import { logger } from '../utils/logger';
 
 class PlatformManager {
   private static instance: PlatformManager;
@@ -38,7 +39,7 @@ class PlatformManager {
         const { CapacitorPlatformAdapter } = await import('./capacitor/capacitor-adapter');
         return new CapacitorPlatformAdapter();
       } catch (error) {
-        console.warn('Failed to load Capacitor adapter, falling back to web', error);
+        logger.warn('Failed to load Capacitor adapter, falling back to web', error);
       }
     }
 

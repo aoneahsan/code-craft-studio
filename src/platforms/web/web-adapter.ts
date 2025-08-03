@@ -25,6 +25,7 @@ import {
   validateBarcodeData
 } from '../../utils/validation';
 import { formatQRData } from '../../utils/qr-formatter';
+import { logger } from '../../utils/logger';
 
 export class WebPlatformAdapter implements PlatformAdapter {
   readonly name = 'web';
@@ -210,7 +211,7 @@ export class WebPlatformAdapter implements PlatformAdapter {
       
       await this.storage.set('history', JSON.stringify(history));
     } catch (error) {
-      console.error('Failed to save to history:', error);
+      logger.error('Failed to save to history:', error);
       throw error;
     }
   }
@@ -230,7 +231,7 @@ export class WebPlatformAdapter implements PlatformAdapter {
       
       return history;
     } catch (error) {
-      console.error('Failed to get history:', error);
+      logger.error('Failed to get history:', error);
       return [];
     }
   }
@@ -251,7 +252,7 @@ export class WebPlatformAdapter implements PlatformAdapter {
         lastUpdated: new Date().toISOString()
       };
     } catch (error) {
-      console.error('Failed to get analytics:', error);
+      logger.error('Failed to get analytics:', error);
       return {
         totalScans: 0,
         totalGenerations: 0,

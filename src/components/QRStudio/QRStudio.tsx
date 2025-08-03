@@ -2,7 +2,8 @@ import React, { useState, useCallback, useRef } from 'react';
 import { QRScanner } from '../QRScanner';
 import { QRGenerator } from '../QRGenerator';
 import { BarcodeScanner } from '../BarcodeScanner';
-import { QRCodeStudio } from '../../index';
+import { getPlatform } from '../../platforms';
+import { logger } from '../../utils/logger';
 import type { 
   QRStudioProps, 
   QRData,
@@ -77,10 +78,11 @@ export const QRStudio: React.FC<QRStudioProps> = ({
 
   const loadHistory = async () => {
     try {
-      const result = await QRCodeStudio.getHistory({ limit: 20 });
-      setHistory(result.items);
+      const platform = await getPlatform();
+      const items = await platform.getHistory({ limit: 20 });
+      setHistory(items);
     } catch (error) {
-      console.error('Failed to load history:', error);
+      logger.error('Failed to load history:', error);
     }
   };
 
@@ -101,16 +103,22 @@ export const QRStudio: React.FC<QRStudioProps> = ({
 
   const handleGenerateBarcode = useCallback(async () => {
     try {
-      const result = await QRCodeStudio.generateBarcode({
+      const platform = await getPlatform();
+      const result = await platform.generateBarcode(
+        formData.barcodeData || '',
+        selectedBarcodeFormat,
+        {
+          width: 300,
+          height: 100,
+        }
+      );
+      setGeneratedBarcode({
         format: selectedBarcodeFormat,
         data: formData.barcodeData || '',
-        width: 300,
-        height: 100,
-        displayText: true,
+        dataUrl: result.dataUrl,
       });
-      setGeneratedBarcode(result);
     } catch (error) {
-      console.error('Failed to generate barcode:', error);
+      logger.error('Failed to generate barcode:', error);
     }
   }, [selectedBarcodeFormat, formData.barcodeData]);
 
