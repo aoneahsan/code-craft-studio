@@ -1,6 +1,6 @@
 {
   "name": "code-craft-studio",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "A comprehensive QR code and barcode scanning/generation library for React. Works with or without Capacitor. Supports 22+ QR data types and 14+ barcode formats (EAN, UPC, Code 128, etc.), with customizable designs, analytics, and React components. Provider-less architecture for easy integration.",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
